@@ -1,0 +1,28 @@
+--DROP TYPE nest_escXML FORCE;
+CREATE OR REPLACE TYPE nest_escXML AS TABLE OF XMLTYPE;
+/
+
+--DROP TYPE ciudad_type FORCE;
+CREATE OR REPLACE TYPE ciudad_type AS OBJECT(
+id NUMBER(8),
+nombre VARCHAR2(20),
+mis_escenarios nest_escXML
+);
+/
+
+--DROP TABLE ciudad;
+CREATE TABLE ciudad OF ciudad_type
+(id PRIMARY KEY, nombre UNIQUE)
+NESTED TABLE mis_escenarios STORE AS store_escenarios;
+
+--DROP TYPE iconos_type FORCE;
+CREATE OR REPLACE TYPE iconos_type AS OBJECT(
+idciudad NUMBER(8),
+iconos XMLTYPE
+);
+/
+
+--DROP TABLE icono;
+CREATE TABLE icono OF iconos_type(
+idciudad PRIMARY KEY REFERENCES ciudad
+);
