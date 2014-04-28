@@ -69,16 +69,16 @@ public class MovimientoTaxis extends Thread {
                     matriz[t.y][t.x] = 0;
                     nroOpciones = new ArrayList();
 
-                    if (matriz[t.y][t.x - 1] != 1 && t.x - 1 < 100 && t.x - 1 > 0) {
+                    if (matriz[t.y][t.x - 1] != 1) {
                         nroOpciones.add(1);
                     }
-                    if (matriz[t.y + 1][t.x] != 1 && t.y + 1 < 100 && t.x - 1 > 0) {
+                    if (matriz[t.y + 1][t.x] != 1) {
                         nroOpciones.add(2);
                     }
-                    if (matriz[t.y][t.x + 1] != 1 && t.x + 1 < 100 && t.x - 1 > 0) {
+                    if (matriz[t.y][t.x + 1] != 1) {
                         nroOpciones.add(3);
                     }
-                    if (matriz[t.y - 1][t.x] != 1 && t.y - 1 < 100 && t.x - 1 > 0) {
+                    if (matriz[t.y - 1][t.x] != 1) {
                         nroOpciones.add(4);
                     }
                     //Sxstem.out.println(nroOpciones.size());
