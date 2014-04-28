@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JComponent;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JSlider;
 import javax.swing.event.ChangeEvent;
@@ -192,7 +193,7 @@ public class Graficador {
             }
             for (Elemento edificio : ciudad.getEscenarioActual().getEdificios()) {
                 if (edificio.isclicked(XFormedPoint)) {
-                    System.out.println(edificio.getNombre());
+                    JOptionPane.showMessageDialog(null,edificio.getNombre(),"Nombre Edificio",JOptionPane.INFORMATION_MESSAGE);
                 }
             }
 
