@@ -70,7 +70,7 @@ public class Graficador {
         lienzo.scale = 1;
         panelGraficador.add(barraZoom, BorderLayout.WEST);
         panelGraficador.add(lienzo, BorderLayout.CENTER);
-        
+
         panelGraficador.revalidate();
         lienzo.repaint();
         lienzo.requestFocus();
@@ -145,12 +145,7 @@ public class Graficador {
             } catch (NoninvertibleTransformException te) {
                 System.out.println(te);
             }
-            for (Elemento edificio : ciudad.getEscenarioActual().getEdificios()) {
-                if (edificio.isclicked(XFormedPoint)) {
-                    JOptionPane.showMessageDialog(null, edificio.getNombre(), "Nombre Edificio", JOptionPane.INFORMATION_MESSAGE);
-                    lienzo.requestFocus();
-                }
-            }
+
             referenceX = XFormedPoint.getX();
             referenceY = XFormedPoint.getY();
             initialTransform = at;
@@ -199,7 +194,12 @@ public class Graficador {
             } catch (NoninvertibleTransformException ex) {
 
             }
-            
+            for (Elemento edificio : ciudad.getEscenarioActual().getEdificios()) {
+                if (edificio.isclicked(XFormedPoint)) {
+                    JOptionPane.showMessageDialog(null, edificio.getNombre(), "Nombre Edificio", JOptionPane.INFORMATION_MESSAGE);
+                    lienzo.requestFocus();
+                }
+            }
 
         }
 
