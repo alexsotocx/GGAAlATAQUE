@@ -22,6 +22,8 @@ public class MovimientoTaxis extends Thread {
     private Graficador graficador;
     public static boolean moverTaxis = false;
     public static boolean esperaInicio = false;
+    public static long inicioEsperaInicial=0;
+    public static long finEsperaInicial=3000;
     public static MovimientoTaxis mover;
 
     public MovimientoTaxis(List<Taxi> taxis, Ciudad ciudad, Graficador graficador) {
@@ -48,19 +50,21 @@ public class MovimientoTaxis extends Thread {
     @Override
     public void run() {
         while (true) {
+            System.out.println("Esperainicio= "+esperaInicio);
             if(esperaInicio){
-                try {
-                    esperaInicio=false;
-                    Thread.sleep(3000);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(MovimientoTaxis.class.getName()).log(Level.SEVERE, null, ex);
+                while ((MovimientoTaxis.finEsperaInicial - MovimientoTaxis.inicioEsperaInicial) < 3000) {
+                    MovimientoTaxis.finEsperaInicial = System.currentTimeMillis();
+                //System.out.println("Inicio= "+horaInicioCiclo/1000);
+                    //System.out.println("Fin= "+horaFinUltimoCiclo/1000);
+                   // System.out.println("Diferencia= "+(finEsperaInicial - inicioEsperaInicial)/1000);
                 }
+                esperaInicio=false;
             }
             //moverTaxis = true;
             long horaFinUltimoCiclo = 3;
             long horaInicioCiclo = 4;
 
-            while (moverTaxis) {
+            while (moverTaxis&&!esperaInicio) {
                 horaInicioCiclo = System.currentTimeMillis();
                 int[][] matriz = ciudad.getMatrizActual();
                 int opcionElegida;
