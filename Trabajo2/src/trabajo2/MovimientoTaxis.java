@@ -50,15 +50,14 @@ public class MovimientoTaxis extends Thread {
     @Override
     public void run() {
         while (true) {
-            System.out.println("Esperainicio= "+esperaInicio);
+            //System.out.println("Esperainicio= "+esperaInicio);
             if(esperaInicio){
-                while ((MovimientoTaxis.finEsperaInicial - MovimientoTaxis.inicioEsperaInicial) < 3000) {
-                    MovimientoTaxis.finEsperaInicial = System.currentTimeMillis();
-                //System.out.println("Inicio= "+horaInicioCiclo/1000);
-                    //System.out.println("Fin= "+horaFinUltimoCiclo/1000);
-                   // System.out.println("Diferencia= "+(finEsperaInicial - inicioEsperaInicial)/1000);
+                try {
+                    Thread.sleep(3000);
+                    esperaInicio=false;
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(MovimientoTaxis.class.getName()).log(Level.SEVERE, null, ex);
                 }
-                esperaInicio=false;
             }
             //moverTaxis = true;
             long horaFinUltimoCiclo = 3;
