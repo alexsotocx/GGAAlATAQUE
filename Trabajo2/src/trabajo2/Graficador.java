@@ -66,11 +66,11 @@ public class Graficador {
         this.taxis = new ArrayList<>();
         lienzo.translateX = 0;
         lienzo.translateY = 0;
+        barraZoom.setValue(100);
         lienzo.scale = 1;
-        
         panelGraficador.add(barraZoom, BorderLayout.WEST);
         panelGraficador.add(lienzo, BorderLayout.CENTER);
-        barraZoom.setValue(100);
+
         panelGraficador.revalidate();
         panelGraficador.repaint();
     }
@@ -143,6 +143,11 @@ public class Graficador {
             } catch (NoninvertibleTransformException te) {
                 System.out.println(te);
             }
+            for (Elemento edificio : ciudad.getEscenarioActual().getEdificios()) {
+                if (edificio.isclicked(XFormedPoint)) {
+                    JOptionPane.showMessageDialog(null, edificio.getNombre(), "Nombre Edificio", JOptionPane.INFORMATION_MESSAGE);
+                }
+            }
             referenceX = XFormedPoint.getX();
             referenceY = XFormedPoint.getY();
             initialTransform = at;
@@ -189,13 +194,9 @@ public class Graficador {
             try {
                 XFormedPoint = initialTransform.inverseTransform(e.getPoint(), null);
             } catch (NoninvertibleTransformException ex) {
-                
+
             }
-            for (Elemento edificio : ciudad.getEscenarioActual().getEdificios()) {
-                if (edificio.isclicked(XFormedPoint)) {
-                    JOptionPane.showMessageDialog(null,edificio.getNombre(),"Nombre Edificio",JOptionPane.INFORMATION_MESSAGE);
-                }
-            }
+            
 
         }
 
