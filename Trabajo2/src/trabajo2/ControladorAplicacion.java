@@ -106,10 +106,11 @@ public class ControladorAplicacion {
                         taxis = Taxi.generarTaxisByCiudad(ciudad, cantTaxis);
                         graficador.graficarTaxis(taxis);
                         interfaz.setLabelTaxis(cantTaxis);
+                        MovimientoTaxis.inicioEsperaInicial = System.currentTimeMillis();
+                        MovimientoTaxis.mover.esperaInicio = true;
                         MovimientoTaxis.mover.setCiudad(ciudad);
                         MovimientoTaxis.mover.setTaxis(taxis);
                         MovimientoTaxis.mover.setGraficador(graficador);
-                        MovimientoTaxis.mover.esperaInicio = true;
                         interfaz.getBotonPararTaxis().setText("Parar");
                         MovimientoTaxis.moverTaxis = true;
 
