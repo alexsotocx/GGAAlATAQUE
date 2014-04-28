@@ -8,6 +8,7 @@ package trabajo2;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -48,7 +49,11 @@ public class ControladorAplicacion {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Ciudad ciudad = (Ciudad) interfaz.getCiudadSeleccionada();
-                Elemento.rellenarImagenes(ciudad.getId());
+                try {
+                    Elemento.setImagenes(bdHelper.getImagenesByIdCiudad(ciudad.getId()));
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(interfaz, "No se encontraron algunas imagenes","Error",JOptionPane.ERROR_MESSAGE);
+                }
                 int escenario = interfaz.getEscenarioSeleccionado();
                 ciudad.setEscenarioActual(bdHelper.getEscenario(ciudad.getId(), escenario));
                 graficador.graficarCiudad(ciudad);

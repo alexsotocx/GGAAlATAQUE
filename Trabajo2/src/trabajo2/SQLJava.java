@@ -1,12 +1,16 @@
 package trabajo2;
 
 import config.ConstantesConn;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 import javax.swing.JOptionPane;
 
 public class SQLJava {
@@ -77,6 +81,30 @@ public class SQLJava {
         return new Escenario(escenario, getEdificiosByIdCiudad(idCiudad, escenario), getHuecosByIdCiudad(idCiudad, escenario));
     }
 
+    public HashMap<String, BufferedImage> getImagenesByIdCiudad(int idCiudad) throws IOException {
+        HashMap<String, BufferedImage> imagenes = new HashMap<>();
+        String xml = "img.iconos";
+        try {
+            int i = 1;
+            while (true) {
+                String query = "SELECT EXISTSNODE(img.iconos,'//elemento[" + i + "]') existe, EXTRACTVALUE(img.iconos,'//elemento[" + i + "]/tipo') tipo, EXTRACTVALUE(img.iconos,'//elemento[" + i + "]/ruta') ruta  FROM icono img WHERE idciudad = " + idCiudad;
+                i++;
+                ResultSet consulta = ejecutarSelect(query);
+                consulta.next();
+                if (consulta.getInt("existe") == 1) {
+                    imagenes.put(consulta.getString("tipo").trim(), ImageIO.read(new File(consulta.getString("ruta"))));
+                } else {
+                    break;
+                }
+            }
+
+        } catch (SQLException e) {
+
+        }
+
+        return imagenes;
+    }
+
     public void cerrarConexion() throws SQLException {
         conexion.close();
     }
@@ -85,16 +113,17 @@ public class SQLJava {
         return "TABLE(SELECT mis_escenarios FROM ciudad WHERE id = " + id + ")  t2";
     }
 
-    private String queryExtractValue(String topTag, String campoxml, int index) {
+    private String queryExtractValue(String xml, String topTag, String campoxml, int index) {
         String indexs = index == -1 ? "last()" : Integer.toString(index);
-        return " EXTRACTVALUE(value(t2),'//" + topTag + "[" + indexs + "]/" + campoxml + "') " + campoxml;
+        return " EXTRACTVALUE(value(" + xml + "),'//" + topTag + "[" + indexs + "]/" + campoxml + "') " + campoxml;
     }
 
     private List<Elemento> getEdificiosByIdCiudad(int id, int escenario) {
         ArrayList<Elemento> edificios = new ArrayList<>();
         String ed = "edificio";
+        String xml = "t2";
         try {
-            String query = "SELECT " + queryExtractValue(ed, "x1", -1) + ", " + queryExtractValue(ed, "y1", -1) + " FROM " + getNestedTableByIdCiudad(id);
+            String query = "SELECT " + queryExtractValue(xml, ed, "x1", -1) + ", " + queryExtractValue(xml, ed, "y1", -1) + " FROM " + getNestedTableByIdCiudad(id);
             ResultSet resultado = ejecutarSelect(query);
 
             if (!resultado.next()) {
@@ -106,9 +135,9 @@ public class SQLJava {
             resultado.close();
             int x1 = -1, y1 = -1, i = 1;
             do {
-                query = "SELECT " + queryExtractValue(ed, "x1", i) + ", " + queryExtractValue(ed, "y1", i) + ", "
-                        + queryExtractValue(ed, "x2", i) + ", " + queryExtractValue(ed, "y2", i) + ", "
-                        + queryExtractValue(ed, "nombre", i) + ", " + queryExtractValue(ed, "tipo", i) + " FROM " + getNestedTableByIdCiudad(id);
+                query = "SELECT " + queryExtractValue(xml, ed, "x1", i) + ", " + queryExtractValue(xml, ed, "y1", i) + ", "
+                        + queryExtractValue(xml, ed, "x2", i) + ", " + queryExtractValue(xml, ed, "y2", i) + ", "
+                        + queryExtractValue(xml, ed, "nombre", i) + ", " + queryExtractValue(xml, ed, "tipo", i) + " FROM " + getNestedTableByIdCiudad(id);
                 resultado = ejecutarSelect(query);
 
                 if (!resultado.next()) {
@@ -133,8 +162,9 @@ public class SQLJava {
     private List<Elemento> getHuecosByIdCiudad(int id, int escenario) {
         ArrayList<Elemento> huecos = new ArrayList<>();
         String hueco = "hueco";
+        String xml = "t2";
         try {
-            String query = "SELECT " + queryExtractValue(hueco, "x1", -1) + ", " + queryExtractValue(hueco, "y1", -1) + " FROM " + getNestedTableByIdCiudad(id);
+            String query = "SELECT " + queryExtractValue(xml, hueco, "x1", -1) + ", " + queryExtractValue(xml, hueco, "y1", -1) + " FROM " + getNestedTableByIdCiudad(id);
             ResultSet resultado = ejecutarSelect(query);
 
             if (!resultado.next()) {
@@ -146,8 +176,8 @@ public class SQLJava {
             resultado.close();
             int x1 = -1, y1 = -1, i = 1;
             do {
-                query = "SELECT " + queryExtractValue(hueco, "x1", i) + ", " + queryExtractValue(hueco, "y1", i) + ", "
-                        + queryExtractValue(hueco, "x2", i) + ", " + queryExtractValue(hueco, "y2", i)
+                query = "SELECT " + queryExtractValue(xml, hueco, "x1", i) + ", " + queryExtractValue(xml, hueco, "y1", i) + ", "
+                        + queryExtractValue(xml, hueco, "x2", i) + ", " + queryExtractValue(xml, hueco, "y2", i)
                         + " FROM " + getNestedTableByIdCiudad(id);
                 resultado = ejecutarSelect(query);
 

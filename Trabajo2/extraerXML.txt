@@ -9,3 +9,5 @@ v con esto puede ver si el edificio #i existe en el escenario #j donde i es el n
 select extract(value(t2),'//edificio/x1/text()') as x1, extract(value(t2),'//edificio/y1/text()') as y1, extract(value(t2),'//edificio/x2/text()') as x2, extract(value(t2),'//edificio/y2/text()') as y2, extract(value(t2),'//edificio/tipo/text()') as tipo, extract(value(t2),'//edificio/nombre/text()') as nombre from (SELECT TABLE(c.mis_escenarios) from ciudad c) as t2;
 select extract(value(t2),'//edificio/x1/text()') as x1, extract(value(t2),'//edificio/y1/text()') as y1, extract(value(t2),'//edificio/x2/text()') as x2, extract(value(t2),'//edificio/y2/text()') as y2, extract(value(t2),'//edificio/tipo/text()') as tipo, extract(value(t2),'//edificio/nombre/text()') as nombre from TABLE(SELECT mis_escenarios from ciudad)  t2;
 select extractvalue(value(t2),'//edificio[1]/x1') as x1 from (TABLE(SELECT mis_escenarios from ciudad where id= 1)  t2) fetch first 5 rows only;
+
+SELECT existsnode(img.iconos,'//elemento[2]') existe,extractvalue(img.iconos,'//elemento[2]/tipo') tipo  from icono img where idciudad = 1;

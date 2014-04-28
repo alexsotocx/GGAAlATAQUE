@@ -63,6 +63,10 @@ public class Graficador {
     public void graficarCiudad(Ciudad ciudad) {
         this.ciudad = ciudad;
         this.taxis = new ArrayList<>();
+        lienzo.translateX = 0;
+        lienzo.translateY = 0;
+        lienzo.scale = 1;
+        barraZoom.setValue(100);
         panelGraficador.add(barraZoom, BorderLayout.WEST);
         panelGraficador.add(lienzo, BorderLayout.CENTER);
         panelGraficador.revalidate();
@@ -85,9 +89,6 @@ public class Graficador {
         this.panelGraficador = panelGraficador;
     }
 
-    /**
-     * @return the ciudad
-     */
     public Ciudad getCiudad() {
         return ciudad;
     }
