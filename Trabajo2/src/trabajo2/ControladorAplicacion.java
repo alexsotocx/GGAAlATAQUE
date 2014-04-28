@@ -49,11 +49,7 @@ public class ControladorAplicacion {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Ciudad ciudad = (Ciudad) interfaz.getCiudadSeleccionada();
-                try {
-                    Elemento.setImagenes(bdHelper.getImagenesByIdCiudad(ciudad.getId()));
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(interfaz, "No se encontraron algunas imagenes","Error",JOptionPane.ERROR_MESSAGE);
-                }
+                Elemento.setImagenes(bdHelper.getImagenesByIdCiudad(ciudad.getId()));
                 int escenario = interfaz.getEscenarioSeleccionado();
                 ciudad.setEscenarioActual(bdHelper.getEscenario(ciudad.getId(), escenario));
                 graficador.graficarCiudad(ciudad);

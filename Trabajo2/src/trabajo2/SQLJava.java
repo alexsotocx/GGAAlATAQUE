@@ -81,7 +81,7 @@ public class SQLJava {
         return new Escenario(escenario, getEdificiosByIdCiudad(idCiudad, escenario), getHuecosByIdCiudad(idCiudad, escenario));
     }
 
-    public HashMap<String, BufferedImage> getImagenesByIdCiudad(int idCiudad) throws IOException {
+    public HashMap<String, BufferedImage> getImagenesByIdCiudad(int idCiudad) {
         HashMap<String, BufferedImage> imagenes = new HashMap<>();
         String xml = "img.iconos";
         try {
@@ -91,14 +91,18 @@ public class SQLJava {
                 i++;
                 ResultSet consulta = ejecutarSelect(query);
                 consulta.next();
-                if (consulta.getInt("existe") == 1) {
-                    imagenes.put(consulta.getString("tipo").trim(), ImageIO.read(new File(consulta.getString("ruta"))));
-                } else {
-                    break;
+                try {
+                    if (consulta.getInt("existe") == 1) {
+                        imagenes.put(consulta.getString("tipo").trim(), ImageIO.read(new File(consulta.getString("ruta"))));
+                    } else {
+                        break;
+                    }
+                } catch (IOException ex) {
+                    JOptionPane.showMessageDialog(null, "No se encntró la imagen " + consulta.getString("ruta") + " en el sistema", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
 
-        } catch (SQLException e) {
+        } catch (SQLException ex) {
 
         }
 

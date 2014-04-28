@@ -4,7 +4,9 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.util.HashMap;
@@ -64,7 +66,7 @@ public class Elemento {
         int x = fontMetrics.stringWidth(nombre);
         x = x / nombre.length();
         int w = recDibujar.width / x;
-        String subnombre = nombre.substring(0, Math.min(nombre.length(), w-1));
+        String subnombre = nombre.substring(0, Math.min(nombre.length(), w - 1));
         stringRectangle = fontMetrics.getStringBounds(subnombre, graficos);
         graficos.drawString(subnombre, recDibujar.x + (recDibujar.width / 2) - ((int) stringRectangle.getWidth() / 2), recDibujar.y + recDibujar.height - 5);
 
@@ -76,28 +78,26 @@ public class Elemento {
         graficos.fill(recDibujar);
     }
 
-    /**
-     * @return the rectangulo
-     */
     public Rectangle getRectangulo() {
         return rectangulo;
     }
 
-    /**
-     * @param rectangulo the rectangulo to set
-     */
+    public boolean isclicked(Point2D punto) {
+        return getRectanguloVisible().contains(punto);
+    }
+
     public void setRectangulo(Rectangle rectangulo) {
         this.rectangulo = rectangulo;
+    }
+
+    public static void setImagenes(HashMap<String, BufferedImage> imagenes) {
+        Elemento.imagenes = imagenes;
     }
 
     private Rectangle getRectanguloVisible() {
         Rectangle rec = new Rectangle(rectangulo);
         rec.setBounds(rec.x * TAMANOPIXEL, (rec.y) * TAMANOPIXEL, rec.width * TAMANOPIXEL, rec.height * TAMANOPIXEL);
         return rec;
-    }
-
-    public static void setImagenes(HashMap<String, BufferedImage> imagenes) {
-        Elemento.imagenes = imagenes;
     }
 
     private void pintarImagen(Graphics2D graficos, Rectangle recVisible) {

@@ -66,9 +66,10 @@ public class Graficador {
         lienzo.translateX = 0;
         lienzo.translateY = 0;
         lienzo.scale = 1;
-        barraZoom.setValue(100);
+        
         panelGraficador.add(barraZoom, BorderLayout.WEST);
         panelGraficador.add(lienzo, BorderLayout.CENTER);
+        barraZoom.setValue(100);
         panelGraficador.revalidate();
         panelGraficador.repaint();
     }
@@ -187,7 +188,12 @@ public class Graficador {
             try {
                 XFormedPoint = initialTransform.inverseTransform(e.getPoint(), null);
             } catch (NoninvertibleTransformException ex) {
-
+                
+            }
+            for (Elemento edificio : ciudad.getEscenarioActual().getEdificios()) {
+                if (edificio.isclicked(XFormedPoint)) {
+                    System.out.println(edificio.getNombre());
+                }
             }
 
         }
