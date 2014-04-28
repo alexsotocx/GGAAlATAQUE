@@ -70,9 +70,10 @@ public class Graficador {
         lienzo.scale = 1;
         panelGraficador.add(barraZoom, BorderLayout.WEST);
         panelGraficador.add(lienzo, BorderLayout.CENTER);
-
+        
         panelGraficador.revalidate();
-        panelGraficador.repaint();
+        lienzo.repaint();
+        lienzo.requestFocus();
     }
 
     public void graficarTaxis(List<Taxi> taxis) {
@@ -80,7 +81,8 @@ public class Graficador {
         panelGraficador.add(barraZoom, BorderLayout.WEST);
         panelGraficador.add(lienzo, BorderLayout.CENTER);
         panelGraficador.revalidate();
-        panelGraficador.repaint();
+        lienzo.repaint();
+        lienzo.requestFocus();
     }
 
     public JPanel getPanelGraficador() {
@@ -146,6 +148,7 @@ public class Graficador {
             for (Elemento edificio : ciudad.getEscenarioActual().getEdificios()) {
                 if (edificio.isclicked(XFormedPoint)) {
                     JOptionPane.showMessageDialog(null, edificio.getNombre(), "Nombre Edificio", JOptionPane.INFORMATION_MESSAGE);
+                    lienzo.requestFocus();
                 }
             }
             referenceX = XFormedPoint.getX();
