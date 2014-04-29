@@ -128,7 +128,7 @@ public class Ciudad {
             Rectangle r = hueco.getRectangulo();
             for (int i = r.x+1; i < r.x + r.width; i++) {
                 for (int j = r.y+1; j < r.y + r.height; j++) {
-                    matrizActual[j][i] = 1;
+                    matrizActual[j][i] = -1;
                 }
             }
         }

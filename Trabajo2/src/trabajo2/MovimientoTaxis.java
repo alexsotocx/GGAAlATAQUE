@@ -68,7 +68,7 @@ public class MovimientoTaxis extends Thread {
                     matriz[taxi.y][taxi.x] = 0;
                     nroOpciones = new ArrayList();
                     for (int i = 0; i < 4; i++) {
-                        if (matriz[taxi.y + dy[i]][taxi.x + dx[i]] != 1) {
+                        if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1) {
                             nroOpciones.add(i + 1);
                         }
                     }
