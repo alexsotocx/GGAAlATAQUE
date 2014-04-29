@@ -84,7 +84,7 @@ public class MovimientoTaxis extends Thread {
                 break;
             }
             try {
-                Thread.sleep(2700);
+                Thread.sleep(2900);
             } catch (InterruptedException ex) {
                 Logger.getLogger(MovimientoTaxis.class.getName()).log(Level.SEVERE, null, ex);
             }
