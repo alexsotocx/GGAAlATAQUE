@@ -195,7 +195,13 @@ public class Graficador {
             }
             for (Elemento edificio : ciudad.getEscenarioActual().getEdificios()) {
                 if (edificio.isclicked(XFormedPoint)) {
-                    JOptionPane.showMessageDialog(null, edificio.getNombre(), "Nombre Edificio", JOptionPane.INFORMATION_MESSAGE);
+                    StringBuilder informacion = new StringBuilder();
+                    informacion.append("Nombre: ").append(edificio.getNombre()).append('\n');
+                    informacion.append("Tipo: ").append(edificio.getTipo()).append('\n');
+                    informacion.append("Rectangulo\n\tPunto Inicial: ").append('(').append(edificio.getRectangulo().x).append(',').append(edificio.getRectangulo().y);
+                    informacion.append(")\n\tAncho: ").append(edificio.getRectangulo().width).append('\n');
+                    informacion.append("\tLargo: ").append(edificio.getRectangulo().height).append('\n');
+                    JOptionPane.showMessageDialog(null, informacion.toString(), "Información", JOptionPane.INFORMATION_MESSAGE);
                     lienzo.requestFocus();
                 }
             }

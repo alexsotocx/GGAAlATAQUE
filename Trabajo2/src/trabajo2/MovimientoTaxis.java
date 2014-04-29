@@ -22,8 +22,6 @@ public class MovimientoTaxis extends Thread {
     private Graficador graficador;
     public static boolean moverTaxis = false;
     public static boolean esperaInicio = false;
-    public static long inicioEsperaInicial = 0;
-    public static long finEsperaInicial = 3000;
     public static MovimientoTaxis mover;
     private final int dx[] = {-1, 0, 1, 0};
     private final int dy[] = {0, 1, 0, -1};
