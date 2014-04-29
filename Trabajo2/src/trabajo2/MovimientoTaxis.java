@@ -2,7 +2,7 @@
  * To change this license header, choose License Headers in Project Properties.
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
-fasdfasfd
+ fasdfasfd
  */
 package trabajo2;
 
@@ -22,9 +22,11 @@ public class MovimientoTaxis extends Thread {
     private Graficador graficador;
     public static boolean moverTaxis = false;
     public static boolean esperaInicio = false;
-    public static long inicioEsperaInicial=0;
-    public static long finEsperaInicial=3000;
+    public static long inicioEsperaInicial = 0;
+    public static long finEsperaInicial = 3000;
     public static MovimientoTaxis mover;
+    private final int dx[] = {-1, 0, 1, 0};
+    private final int dy[] = {0, 1, 0, -1};
 
     public MovimientoTaxis(List<Taxi> taxis, Ciudad ciudad, Graficador graficador) {
         this.taxis = taxis;
@@ -50,84 +52,45 @@ public class MovimientoTaxis extends Thread {
     @Override
     public void run() {
         while (true) {
-            //System.out.println("Esperainicio= "+esperaInicio);
-            if(esperaInicio){
+            if (esperaInicio) {
                 try {
                     Thread.sleep(3000);
-                    esperaInicio=false;
+                    esperaInicio = false;
                 } catch (InterruptedException ex) {
                     Logger.getLogger(MovimientoTaxis.class.getName()).log(Level.SEVERE, null, ex);
                 }
             }
-            //moverTaxis = true;
-            long horaFinUltimoCiclo = 3;
-            long horaInicioCiclo = 4;
 
-            while (moverTaxis&&!esperaInicio) {
-                horaInicioCiclo = System.currentTimeMillis();
+            while (moverTaxis && !esperaInicio) {
                 int[][] matriz = ciudad.getMatrizActual();
                 int opcionElegida;
                 ArrayList<Integer> nroOpciones;//aloja las opciones posibles... op1:Arriba op2:derecha op3:abajo op4:izquierda
-                for (Taxi t : taxis) {
-                    matriz[t.y][t.x] = 0;
+                for (Taxi taxi : taxis) {
+                    matriz[taxi.y][taxi.x] = 0;
                     nroOpciones = new ArrayList();
-
-                    if (matriz[t.y][t.x - 1] != 1) {
-                        nroOpciones.add(1);
+                    for (int i = 0; i < 4; i++) {
+                        if (matriz[taxi.y + dy[i]][taxi.x + dx[i]] != 1) {
+                            nroOpciones.add(i + 1);
+                        }
                     }
-                    if (matriz[t.y + 1][t.x] != 1) {
-                        nroOpciones.add(2);
-                    }
-                    if (matriz[t.y][t.x + 1] != 1) {
-                        nroOpciones.add(3);
-                    }
-                    if (matriz[t.y - 1][t.x] != 1) {
-                        nroOpciones.add(4);
-                    }
-                    //Sxstem.out.println(nroOpciones.size());
-
                     opcionElegida = (nroOpciones.size() > 0) ? nroOpciones.get((int) (Math.random() * nroOpciones.size())) : 5;
-                    //System.out.println(opcionElegida);
-                    switch (opcionElegida) {
-                        case 1:
-                            t.x -= 1;
-                            break;
-                        case 2:
-                            t.y += 1;
-                            break;
-                        case 3:
-                            t.x += 1;
-                            break;
-                        case 4:
-                            t.y -= 1;
-                            break;
+                    if (opcionElegida != 5) {
+                        taxi.y += dy[opcionElegida - 1];
+                        taxi.x += dx[opcionElegida - 1];
+                        matriz[taxi.y][taxi.x] = 2;
                     }
-                    matriz[t.y][t.x] = 2;
-
-                }
-            //System.out.println("Graficar");
-            /*for (int i = 0; i < matriz.length; i++) {
-                 for (int j = 0; j < matriz[0].length; j++) {
-                 System.out.print(matriz[i][j] + " ");
-                 }
-                 System.out.println("");
-                 }*/
-                while ((horaInicioCiclo - horaFinUltimoCiclo) < 3000) {
-                    horaInicioCiclo = System.currentTimeMillis();
-                //System.out.println("Inicio= "+horaInicioCiclo/1000);
-                    //System.out.println("Fin= "+horaFinUltimoCiclo/1000);
-                    //System.out.println("Diferencia= "+(horaInicioCiclo - horaFinUltimoCiclo)/1000);
                 }
                 if (moverTaxis) {
                     graficador.graficarTaxis(taxis);
-                    horaFinUltimoCiclo = System.currentTimeMillis();
                 }
-
+                break;
             }
-            
-            //System.out.println(".");
+            try {
+                Thread.sleep(2700);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(MovimientoTaxis.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
     }
 
-   
 }

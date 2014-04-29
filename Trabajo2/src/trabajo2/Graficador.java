@@ -82,7 +82,6 @@ public class Graficador {
         panelGraficador.add(lienzo, BorderLayout.CENTER);
         panelGraficador.revalidate();
         lienzo.repaint();
-        lienzo.requestFocus();
     }
 
     public JPanel getPanelGraficador() {
