@@ -22,9 +22,9 @@ public class MovimientoTaxis extends Thread {
     private Graficador graficador;
     public static boolean moverTaxis = false;
     public static boolean esperaInicio = false;
-    public static MovimientoTaxis mover;
     private final int dx[] = {-1, 0, 1, 0};
     private final int dy[] = {0, 1, 0, -1};
+    private volatile Thread hilo;
 
     public MovimientoTaxis(List<Taxi> taxis, Ciudad ciudad, Graficador graficador) {
         this.taxis = taxis;
@@ -49,13 +49,14 @@ public class MovimientoTaxis extends Thread {
 
     @Override
     public void run() {
-        while (true) {
+        Thread hiloActual = Thread.currentThread();
+        while (hilo == hiloActual) {
             if (esperaInicio) {
                 try {
-                    Thread.sleep(3000);
+                    hiloActual.sleep(3000);
                     esperaInicio = false;
                 } catch (InterruptedException ex) {
-                    Logger.getLogger(MovimientoTaxis.class.getName()).log(Level.SEVERE, null, ex);
+                    break;
                 }
             }
 
@@ -84,11 +85,26 @@ public class MovimientoTaxis extends Thread {
                 break;
             }
             try {
-                Thread.sleep(2900);
+                hiloActual.sleep(2900);
             } catch (InterruptedException ex) {
-                Logger.getLogger(MovimientoTaxis.class.getName()).log(Level.SEVERE, null, ex);
+                break;
             }
         }
     }
 
+    @Override
+    public void start() {
+        hilo = new Thread(this);
+        hilo.start();
+    }
+
+    public void stopThread() {
+        Thread hiloParar = hilo;
+        hilo = null;
+        hiloParar.interrupt();
+    }
+
+    public boolean isRunning() {
+        return hilo!=null;
+    }
 }

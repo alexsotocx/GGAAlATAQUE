@@ -26,19 +26,19 @@ public class ControladorAplicacion {
     private Graficador graficador;
     private HashMap<Integer, Ciudad> ciudades;
     private List<Taxi> taxis;
+    private MovimientoTaxis movimientoTaxis;
 
     public ControladorAplicacion(VistaPrincipal interfaz, SQLJava bdHelper, Graficador graficador) {
         this.bdHelper = bdHelper;
         this.interfaz = interfaz;
         this.graficador = graficador;
         this.taxis = new ArrayList<>();
+        this.movimientoTaxis = new MovimientoTaxis();
     }
 
     public void inicializar() {
         graficador.setPanelGraficador(interfaz.getPanelGrafico());
         ciudades = bdHelper.listarCiudades();
-        MovimientoTaxis.mover = new MovimientoTaxis();
-        MovimientoTaxis.mover.start();
         iniciarInterfaz();
     }
 
@@ -58,8 +58,10 @@ public class ControladorAplicacion {
                 interfaz.setLabelTaxis(0);
                 MovimientoTaxis.moverTaxis = false;
                 interfaz.getBotonPararTaxis().setText("Parar");
-                MovimientoTaxis.mover.setTaxis(new ArrayList());
-
+                movimientoTaxis.setTaxis(new ArrayList());
+                if (movimientoTaxis.isRunning()) {
+                    movimientoTaxis.stopThread();
+                }
             }
         });
 
@@ -83,6 +85,9 @@ public class ControladorAplicacion {
             public void actionPerformed(ActionEvent ae) {
                 Ciudad ciudad = graficador.getCiudad();
                 if (ciudad != null) {
+                    if (movimientoTaxis.isRunning()) {
+                        movimientoTaxis.stopThread();
+                    }
                     int cantTaxis = 0;
                     int[][] matriz = ciudad.getMatrizActual();
                     int cantMax = 0;
@@ -103,16 +108,17 @@ public class ControladorAplicacion {
                         } else if (cantTaxis > cantMax) {
                             cantTaxis = cantMax;
                         }
+
                         taxis = Taxi.generarTaxisByCiudad(ciudad, cantTaxis);
                         graficador.graficarTaxis(taxis);
                         interfaz.setLabelTaxis(cantTaxis);
-                        //MovimientoTaxis.inicioEsperaInicial = System.currentTimeMillis();
-                        MovimientoTaxis.mover.esperaInicio = true;
-                        MovimientoTaxis.mover.setCiudad(ciudad);
-                        MovimientoTaxis.mover.setTaxis(taxis);
-                        MovimientoTaxis.mover.setGraficador(graficador);
+                        movimientoTaxis.esperaInicio = true;
+                        movimientoTaxis.setCiudad(ciudad);
+                        movimientoTaxis.setTaxis(taxis);
+                        movimientoTaxis.setGraficador(graficador);
                         interfaz.getBotonPararTaxis().setText("Parar");
                         MovimientoTaxis.moverTaxis = true;
+                        movimientoTaxis.start();
 
                     } catch (HeadlessException | NumberFormatException e) {
                         JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
