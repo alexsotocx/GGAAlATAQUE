@@ -85,6 +85,7 @@ public class ControladorAplicacion {
             public void actionPerformed(ActionEvent ae) {
                 Ciudad ciudad = graficador.getCiudad();
                 if (ciudad != null) {
+
                     if (movimientoTaxis.isRunning()) {
                         movimientoTaxis.stopThread();
                     }
@@ -121,6 +122,7 @@ public class ControladorAplicacion {
                         movimientoTaxis.start();
 
                     } catch (HeadlessException | NumberFormatException e) {
+                        movimientoTaxis.start();
                         JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {

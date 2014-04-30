@@ -85,7 +85,7 @@ public class MovimientoTaxis extends Thread {
                 break;
             }
             try {
-                hiloActual.sleep(2900);
+                hiloActual.sleep(2700);
             } catch (InterruptedException ex) {
                 break;
             }
