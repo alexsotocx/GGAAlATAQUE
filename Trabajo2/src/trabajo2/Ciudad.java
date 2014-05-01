@@ -167,8 +167,8 @@ public class Ciudad {
     }
 
     private Rectangle crearLinea(Point puntoActual, Point puntoAnterior) {
-        int posX = Math.min(puntoActual.x, puntoAnterior.x) * Elemento.TAMANOPIXEL - GROSOR_LINEA;
-        int posY = Math.min(puntoActual.y, puntoAnterior.y) * Elemento.TAMANOPIXEL - GROSOR_LINEA;
+        int posX = Math.min(puntoActual.x, puntoAnterior.x) * Elemento.TAMANOPIXEL - GROSOR_LINEA/2;
+        int posY = Math.min(puntoActual.y, puntoAnterior.y) * Elemento.TAMANOPIXEL - GROSOR_LINEA/2;
         int ancho = (puntoActual.x == puntoAnterior.x) ? GROSOR_LINEA : Math.abs(puntoActual.x - puntoAnterior.x) * Elemento.TAMANOPIXEL + GROSOR_LINEA;
         int largo = (puntoActual.y == puntoAnterior.y) ? GROSOR_LINEA : Math.abs(puntoActual.y - puntoAnterior.y) * Elemento.TAMANOPIXEL + GROSOR_LINEA;
         return (new Rectangle(posX, posY, ancho, largo));
@@ -177,11 +177,49 @@ public class Ciudad {
     private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux) {
         return nodoAux.x >= 0 && nodoAux.x < 101 && nodoAux.y >= 0 && nodoAux.y < 101 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1;
     }
+    
+    public List<Rectangle> getRutaMasCortaEdificio(Point inicio, Point fin) {
+        //Donde se van a guardar los próximos nodos(puntos) a recorrer
+        Queue<Point> q = new LinkedList<>();
+        q.offer(inicio);
+        Point recorrido[][] = new Point[101][101]; //Donde se va a guardar el recorrido, se guarda como se llego a este nodo
+        int tamanoRecorrido[][] = new int[101][101];
+        while (!q.isEmpty()) {
+            Point nodo = q.poll();
+            if (nodo.equals(fin)) {
+                break;
+            }
+            //Recorrer todos los vecinos y encolarlos si nos podemos mover
+            for (int i = 0; i < 4; i++) {
+                Point nodoVecino = new Point(nodo);
+                nodoVecino.move(nodo.x + MovimientoTaxis.dx[i], nodo.y + MovimientoTaxis.dy[i]);
+                if (puedoMovermeEdificio(tamanoRecorrido, nodoVecino)) {
+                    q.offer(nodoVecino);
+                    tamanoRecorrido[nodoVecino.y][nodoVecino.x] = 1 + tamanoRecorrido[nodo.y][nodo.x];
+                    recorrido[nodoVecino.y][nodoVecino.x] = nodo;
+                }
+            }
+        }
+        if (tamanoRecorrido[fin.y][fin.x] == 0) {
+            return null;
+        } else {
+            return construirRuta(recorrido, inicio, fin);
+        }
+    }
+    
+    private boolean puedoMovermeEdificio(int[][] tamanoRecorrido, Point nodoAux) {
+        return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
+    }
 
     private void generarMatriz() {
         for (int i = 0; i < 101; i++) {
             for (int j = 0; j < 101; j++) {
-                matrizActual[i][j] = 0;
+                if (i == 0 || i == 100 || j == 0 || j == 100) {
+                    matrizActual[j][i] = -1;
+                }
+                else {
+                    matrizActual[i][j] = 0;
+                }
             }
         }
         for (Elemento edificio : escenarioActual.getEdificios()) {
@@ -197,13 +235,6 @@ public class Ciudad {
             for (int i = r.x + 1; i < r.x + r.width; i++) {
                 for (int j = r.y + 1; j < r.y + r.height; j++) {
                     matrizActual[j][i] = -1;
-                }
-            }
-        }
-        for (int i = 0; i < 101; i++) {
-            for (int j = 0; j < 101; j++) {
-                if (i == 0 || i == 100 || j == 0 || j == 100) {
-                    matrizActual[j][i] = 1;
                 }
             }
         }

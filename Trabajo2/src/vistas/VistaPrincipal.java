@@ -10,6 +10,7 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import trabajo2.Ciudad;
 
@@ -112,6 +113,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         botonGraficarTaxis = new javax.swing.JButton();
         botonPararTaxis = new javax.swing.JButton();
         botonRutaCorta = new javax.swing.JButton();
+        botonAtravesarEdificio = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         panelGraficador = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -121,6 +123,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
         labelEscenario = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         labelTaxis = new javax.swing.JLabel();
+        jLabel6 = new javax.swing.JLabel();
+        numEdifAtrav = new javax.swing.JLabel();
+        jLabel7 = new javax.swing.JLabel();
+        numHuecAtrav = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Segundo Trabajo de BD 2  - Graficación de ciudades");
@@ -183,7 +189,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
         botonPararTaxis.setText("Parar");
 
-        botonRutaCorta.setText("Ruta mas corta");
+        botonRutaCorta.setText("Recoger usuario (5)");
+
+        botonAtravesarEdificio.setText("Recoger usuario (4)");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -191,11 +199,13 @@ public class VistaPrincipal extends javax.swing.JFrame {
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                    .addComponent(botonRutaCorta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(botonGraficarTaxis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(botonPararTaxis, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(botonGraficarTaxis, javax.swing.GroupLayout.PREFERRED_SIZE, 105, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 9, Short.MAX_VALUE)
+                        .addComponent(botonPararTaxis, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(botonAtravesarEdificio, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(botonRutaCorta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
@@ -205,9 +215,11 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(botonGraficarTaxis)
                     .addComponent(botonPararTaxis))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGap(18, 18, 18)
+                .addComponent(botonAtravesarEdificio)
+                .addGap(18, 18, 18)
                 .addComponent(botonRutaCorta)
-                .addContainerGap(72, Short.MAX_VALUE))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Información", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
@@ -265,6 +277,20 @@ public class VistaPrincipal extends javax.swing.JFrame {
         labelTaxis.setText("0");
         jPanel3.add(labelTaxis);
 
+        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel6.setText("Edificios atravesados:");
+        jPanel3.add(jLabel6);
+
+        numEdifAtrav.setText("0");
+        jPanel3.add(numEdifAtrav);
+
+        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
+        jLabel7.setText("Huecos atravesados:");
+        jPanel3.add(jLabel7);
+
+        numHuecAtrav.setText("0");
+        jPanel3.add(numHuecAtrav);
+
         panelGraficador.add(jPanel3, java.awt.BorderLayout.SOUTH);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -295,6 +321,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
      */
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel Jpanel0;
+    private javax.swing.JButton botonAtravesarEdificio;
     private javax.swing.JButton botonGraficar;
     private javax.swing.JButton botonGraficarTaxis;
     private javax.swing.JButton botonPararTaxis;
@@ -306,6 +333,8 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JLabel jLabel6;
+    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -313,8 +342,30 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel labelCiudad;
     private javax.swing.JLabel labelEscenario;
     private javax.swing.JLabel labelTaxis;
+    private javax.swing.JLabel numEdifAtrav;
+    private javax.swing.JLabel numHuecAtrav;
     private javax.swing.JPanel panelGraficador;
     // End of variables declaration//GEN-END:variables
+
+    public int getNumEdifAtrav() {
+        return Integer.parseInt(numEdifAtrav.getText());
+    }
+
+    public void setNumEdifAtrav(int numEdifAtrav) {
+        this.numEdifAtrav.setText(String.valueOf(numEdifAtrav));
+    }
+
+    public int getNumHuecAtrav() {
+        return Integer.parseInt(numHuecAtrav.getText());
+    }
+
+    public void setNumHuecAtrav(int numHuecAtrav) {
+        this.numHuecAtrav.setText(String.valueOf(numHuecAtrav));
+    }
+
+    public JButton getBotonAtravesarEdificio() {
+        return botonAtravesarEdificio;
+    }
 
     private void setLookAndFeel() {
 

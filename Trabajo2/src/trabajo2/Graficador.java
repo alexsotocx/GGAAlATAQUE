@@ -47,6 +47,10 @@ public class Graficador {
     private List<Taxi> taxis;
     private List<Rectangle> ruta;
 
+    public List<Taxi> getTaxis() {
+        return taxis;
+    }
+
     public Graficador() {
         this.taxis = new ArrayList<>();
         this.ruta = new ArrayList<>();

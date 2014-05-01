@@ -186,14 +186,17 @@
           <Layout>
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
-                  <Group type="102" alignment="0" attributes="0">
+                  <Group type="102" attributes="0">
                       <EmptySpace max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
-                          <Component id="botonRutaCorta" max="32767" attributes="0"/>
-                          <Component id="botonGraficarTaxis" max="32767" attributes="0"/>
+                      <Group type="103" groupAlignment="0" attributes="0">
+                          <Group type="102" attributes="0">
+                              <Component id="botonGraficarTaxis" min="-2" pref="105" max="-2" attributes="0"/>
+                              <EmptySpace pref="9" max="32767" attributes="0"/>
+                              <Component id="botonPararTaxis" min="-2" pref="97" max="-2" attributes="0"/>
+                          </Group>
+                          <Component id="botonAtravesarEdificio" max="32767" attributes="0"/>
+                          <Component id="botonRutaCorta" alignment="0" max="32767" attributes="0"/>
                       </Group>
-                      <EmptySpace max="32767" attributes="0"/>
-                      <Component id="botonPararTaxis" min="-2" pref="97" max="-2" attributes="0"/>
                       <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
@@ -206,9 +209,11 @@
                           <Component id="botonGraficarTaxis" alignment="3" min="-2" max="-2" attributes="0"/>
                           <Component id="botonPararTaxis" alignment="3" min="-2" max="-2" attributes="0"/>
                       </Group>
-                      <EmptySpace max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
+                      <Component id="botonAtravesarEdificio" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace type="separate" max="-2" attributes="0"/>
                       <Component id="botonRutaCorta" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="72" max="32767" attributes="0"/>
+                      <EmptySpace pref="21" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -226,7 +231,12 @@
             </Component>
             <Component class="javax.swing.JButton" name="botonRutaCorta">
               <Properties>
-                <Property name="text" type="java.lang.String" value="Ruta mas corta"/>
+                <Property name="text" type="java.lang.String" value="Recoger usuario (5)"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="botonAtravesarEdificio">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Recoger usuario (4)"/>
               </Properties>
             </Component>
           </SubComponents>
@@ -310,6 +320,32 @@
               </Properties>
             </Component>
             <Component class="javax.swing.JLabel" name="labelTaxis">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="0"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel6">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="11" style="1"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Edificios atravesados:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="numEdifAtrav">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="0"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="jLabel7">
+              <Properties>
+                <Property name="font" type="java.awt.Font" editor="org.netbeans.beaninfo.editors.FontEditor">
+                  <Font name="Tahoma" size="11" style="1"/>
+                </Property>
+                <Property name="text" type="java.lang.String" value="Huecos atravesados:"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JLabel" name="numHuecAtrav">
               <Properties>
                 <Property name="text" type="java.lang.String" value="0"/>
               </Properties>

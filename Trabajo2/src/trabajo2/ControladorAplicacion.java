@@ -44,7 +44,8 @@ public class ControladorAplicacion {
     }
 
     private void iniciarInterfaz() {
-
+        
+        
         interfaz.getBotonGraficar().addActionListener(new ActionListener() {
 
             @Override
@@ -75,7 +76,6 @@ public class ControladorAplicacion {
                 } else {
                     interfaz.getBotonPararTaxis().setText("Parar");
                     MovimientoTaxis.moverTaxis = true;
-
                 }
             }
         });
@@ -149,18 +149,54 @@ public class ControladorAplicacion {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                interfaz.setNumEdifAtrav(0);
+                interfaz.setNumHuecAtrav(0);
+                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().size()==0) {
+                    JOptionPane.showMessageDialog(interfaz, "No hay taxis o no están parados");
+                    return;
+                }
                 int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
                 int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
-                int x2 = Integer.parseInt(JOptionPane.showInputDialog("X Final"));
-                int y2 = Integer.parseInt(JOptionPane.showInputDialog("Y Final"));
+                Point taxiMasCercano=getTaxiMasCercano(x1, y1);
                 Ciudad ciudad = graficador.getCiudad();
-                List<Rectangle> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x1, y1), new Point(x2, y2));
+                List<Rectangle> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x1, y1), taxiMasCercano);
                 if (rutaCorta != null) {
                     graficador.dibujarRutaMasCercana(rutaCorta);
                 } else {
-                 JOptionPane.showMessageDialog(interfaz, "Error");
+                    JOptionPane.showMessageDialog(interfaz, "Error");
                 }
             }
+        });
+        
+        interfaz.getBotonAtravesarEdificio().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                interfaz.setNumEdifAtrav(0);
+                interfaz.setNumHuecAtrav(0);
+                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().size()==0) {
+                    JOptionPane.showMessageDialog(interfaz, "No hay taxis o no están parados");
+                    return;
+                }
+                int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
+                int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
+                Point taxiMasCercano=getTaxiMasCercano(x1, y1);
+                Point edificioMasCercano=getEdificioMasCercano(x1, y1);
+                Ciudad ciudad = graficador.getCiudad();
+                List<Rectangle> rutaCortaEdificio = ciudad.getRutaMasCortaEdificio(new Point(x1, y1), edificioMasCercano);
+                List<Rectangle> rutaCortaPersona = ciudad.getRutaMasCortaEdificio(edificioMasCercano, taxiMasCercano);
+                if (rutaCortaPersona != null) {
+                    for (int i = 0; i < rutaCortaPersona.size(); i++) {
+                        rutaCortaEdificio.add(rutaCortaPersona.get(i));
+                    }
+                }
+                if (rutaCortaEdificio != null) {
+                    graficador.dibujarRutaMasCercana(rutaCortaEdificio);
+                } else {
+                    JOptionPane.showMessageDialog(interfaz, "Error");
+                }
+            }
+
         });
         interfaz.fillCiudadCombox(ciudades);
         interfaz.setVisible(true);
@@ -188,6 +224,44 @@ public class ControladorAplicacion {
 
     public void setGraficador(Graficador graficador) {
         this.graficador = graficador;
+    }
+    
+    public Point getTaxiMasCercano(int x1, int y1){
+        taxis=graficador.getTaxis();
+        Point p=new Point();
+        double distMinima=140.007142675f;
+        double distActual;
+        for (Taxi taxi : taxis) {
+            distActual=Math.sqrt(Math.abs(x1-taxi.x)*Math.abs(x1-taxi.x)+Math.abs(y1-taxi.y)*Math.abs(y1-taxi.y));
+            if (distActual < distMinima) {
+                distMinima=distActual;
+                p=taxi;
+            }
+        }
+        return p;
+    }
+    
+    public Point getEdificioMasCercano(int x1, int y1){
+        int[][] matriz=graficador.getCiudad().getMatrizActual();
+        List<Point> unos=new ArrayList();
+        for (int i = 0; i < 101; i++) {
+            for (int j = 0; j < 101; j++) {
+                if (matriz[j][i]==1) {
+                    unos.add(new Point(i,j));
+                }
+            }
+        }
+        Point p=new Point();
+        double distMinima=140.007142675f;
+        double distActual;
+        for (Point uno : unos) {
+            distActual=Math.sqrt(Math.abs(x1-uno.x)*Math.abs(x1-uno.x)+Math.abs(y1-uno.y)*Math.abs(y1-uno.y));
+            if (distActual < distMinima) {
+                distMinima=distActual;
+                p=uno;
+            }
+        }
+        return p;
     }
 
 }
