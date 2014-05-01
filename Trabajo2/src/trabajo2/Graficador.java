@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
@@ -18,6 +19,7 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
+import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -43,9 +45,11 @@ public class Graficador {
     private JPanel panelGraficador;
     private Ciudad ciudad;
     private List<Taxi> taxis;
+    private List<Rectangle> ruta;
 
     public Graficador() {
         this.taxis = new ArrayList<>();
+        this.ruta = new ArrayList<>();
         lienzo = new Lienzo();
         manejadorEventos = new ManejadorEventos();
         lienzo.addMouseListener(manejadorEventos);
@@ -64,6 +68,7 @@ public class Graficador {
     public void graficarCiudad(Ciudad ciudad) {
         this.ciudad = ciudad;
         this.taxis = new ArrayList<>();
+        this.ruta = new ArrayList<>();
         lienzo.translateX = 0;
         lienzo.translateY = 0;
         barraZoom.setValue(100);
@@ -78,6 +83,14 @@ public class Graficador {
 
     public void graficarTaxis(List<Taxi> taxis) {
         this.taxis = taxis;
+        panelGraficador.add(barraZoom, BorderLayout.WEST);
+        panelGraficador.add(lienzo, BorderLayout.CENTER);
+        panelGraficador.revalidate();
+        lienzo.repaint();
+    }
+
+    public void dibujarRutaMasCercana(List<Rectangle> ruta) {
+        this.ruta = ruta;
         panelGraficador.add(barraZoom, BorderLayout.WEST);
         panelGraficador.add(lienzo, BorderLayout.CENTER);
         panelGraficador.revalidate();
@@ -121,9 +134,13 @@ public class Graficador {
             graficos.setTransform(at);
             graficos.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             Ciudad.dibujarSuelo(graficos);
-            getCiudad().dibujar(graficos);
+            ciudad.dibujar(graficos);
             for (Taxi taxi : taxis) {
                 taxi.dibujarTaxi(graficos);
+            }
+            graficos.setColor(Color.GREEN);
+            for (Rectangle pedazoRuta : ruta) {
+                graficos.fillRoundRect(pedazoRuta.x,pedazoRuta.y,pedazoRuta.width,pedazoRuta.height,7,7);
             }
             graficos.setTransform(saveTransform);
         }

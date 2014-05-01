@@ -178,7 +178,7 @@
           <Properties>
             <Property name="border" type="javax.swing.border.Border" editor="org.netbeans.modules.form.editors2.BorderEditor">
               <Border info="org.netbeans.modules.form.compat2.border.TitledBorderInfo">
-                <TitledBorder justification="2" title="Graficaci&#xf3;n de taxis"/>
+                <TitledBorder justification="2" title="Taxis"/>
               </Border>
             </Property>
           </Properties>
@@ -187,23 +187,28 @@
             <DimensionLayout dim="0">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="66" max="-2" attributes="0"/>
-                      <Group type="103" groupAlignment="0" max="-2" attributes="0">
+                      <EmptySpace max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="1" max="-2" attributes="0">
+                          <Component id="botonRutaCorta" max="32767" attributes="0"/>
                           <Component id="botonGraficarTaxis" max="32767" attributes="0"/>
-                          <Component id="botonPararTaxis" max="32767" attributes="0"/>
                       </Group>
                       <EmptySpace max="32767" attributes="0"/>
+                      <Component id="botonPararTaxis" min="-2" pref="97" max="-2" attributes="0"/>
+                      <EmptySpace max="-2" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
             <DimensionLayout dim="1">
               <Group type="103" groupAlignment="0" attributes="0">
                   <Group type="102" alignment="0" attributes="0">
-                      <EmptySpace min="-2" pref="43" max="-2" attributes="0"/>
-                      <Component id="botonGraficarTaxis" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace min="-2" pref="6" max="-2" attributes="0"/>
+                      <Group type="103" groupAlignment="3" attributes="0">
+                          <Component id="botonGraficarTaxis" alignment="3" min="-2" max="-2" attributes="0"/>
+                          <Component id="botonPararTaxis" alignment="3" min="-2" max="-2" attributes="0"/>
+                      </Group>
                       <EmptySpace max="-2" attributes="0"/>
-                      <Component id="botonPararTaxis" min="-2" max="-2" attributes="0"/>
-                      <EmptySpace pref="35" max="32767" attributes="0"/>
+                      <Component id="botonRutaCorta" min="-2" max="-2" attributes="0"/>
+                      <EmptySpace pref="72" max="32767" attributes="0"/>
                   </Group>
               </Group>
             </DimensionLayout>
@@ -217,6 +222,11 @@
             <Component class="javax.swing.JButton" name="botonPararTaxis">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Parar"/>
+              </Properties>
+            </Component>
+            <Component class="javax.swing.JButton" name="botonRutaCorta">
+              <Properties>
+                <Property name="text" type="java.lang.String" value="Ruta mas corta"/>
               </Properties>
             </Component>
           </SubComponents>

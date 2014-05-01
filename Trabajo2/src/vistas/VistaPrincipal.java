@@ -10,7 +10,6 @@ import java.util.Map;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import trabajo2.Ciudad;
 
@@ -55,6 +54,10 @@ public class VistaPrincipal extends javax.swing.JFrame {
 
     public JButton getBotonGraficarTaxis() {
         return botonGraficarTaxis;
+    }
+
+    public JButton getBotonRutaCorta() {
+        return botonRutaCorta;
     }
 
     public void setLabelCiudad(String ciudad) {
@@ -108,6 +111,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
         jPanel2 = new javax.swing.JPanel();
         botonGraficarTaxis = new javax.swing.JButton();
         botonPararTaxis = new javax.swing.JButton();
+        botonRutaCorta = new javax.swing.JButton();
         jPanel4 = new javax.swing.JPanel();
         panelGraficador = new javax.swing.JPanel();
         jPanel3 = new javax.swing.JPanel();
@@ -173,31 +177,37 @@ public class VistaPrincipal extends javax.swing.JFrame {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Graficación de taxis", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
+        jPanel2.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Taxis", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
 
         botonGraficarTaxis.setText("Graficar taxis");
 
         botonPararTaxis.setText("Parar");
+
+        botonRutaCorta.setText("Ruta mas corta");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(66, 66, 66)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(botonGraficarTaxis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(botonPararTaxis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(botonRutaCorta, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(botonGraficarTaxis, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(botonPararTaxis, javax.swing.GroupLayout.PREFERRED_SIZE, 97, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
-                .addGap(43, 43, 43)
-                .addComponent(botonGraficarTaxis)
+                .addGap(6, 6, 6)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(botonGraficarTaxis)
+                    .addComponent(botonPararTaxis))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(botonPararTaxis)
-                .addContainerGap(35, Short.MAX_VALUE))
+                .addComponent(botonRutaCorta)
+                .addContainerGap(72, Short.MAX_VALUE))
         );
 
         jPanel4.setBorder(javax.swing.BorderFactory.createTitledBorder(null, "Información", javax.swing.border.TitledBorder.CENTER, javax.swing.border.TitledBorder.DEFAULT_POSITION));
@@ -288,6 +298,7 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JButton botonGraficar;
     private javax.swing.JButton botonGraficarTaxis;
     private javax.swing.JButton botonPararTaxis;
+    private javax.swing.JButton botonRutaCorta;
     private javax.swing.JComboBox comboxCiudad;
     private javax.swing.JComboBox comboxEscenario;
     private javax.swing.JLabel jLabel1;

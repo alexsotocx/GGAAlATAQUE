@@ -8,8 +8,6 @@ package trabajo2;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *
@@ -17,13 +15,14 @@ import java.util.logging.Logger;
  */
 public class MovimientoTaxis extends Thread {
 
+    public static final int dx[] = {-1, 0, 1, 0};
+    public static final int dy[] = {0, 1, 0, -1};
     private List<Taxi> taxis;
     private Ciudad ciudad;
     private Graficador graficador;
     public static boolean moverTaxis = false;
     public static boolean esperaInicio = false;
-    private final int dx[] = {-1, 0, 1, 0};
-    private final int dy[] = {0, 1, 0, -1};
+
     private volatile Thread hilo;
 
     public MovimientoTaxis(List<Taxi> taxis, Ciudad ciudad, Graficador graficador) {
@@ -105,6 +104,6 @@ public class MovimientoTaxis extends Thread {
     }
 
     public boolean isRunning() {
-        return hilo!=null;
+        return hilo != null;
     }
 }

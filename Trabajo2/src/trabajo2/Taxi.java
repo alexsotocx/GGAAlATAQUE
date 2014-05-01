@@ -3,10 +3,13 @@ package trabajo2;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Queue;
 import static trabajo2.Elemento.TAMANOPIXEL;
 
 public class Taxi extends java.awt.Point {
@@ -39,8 +42,10 @@ public class Taxi extends java.awt.Point {
     }
 
     private Rectangle2D.Double getRectanguloVisible() {
-        Rectangle2D.Double rec = new Rectangle2D.Double((this.x-0.125)*TAMANOPIXEL, (this.y-0.125)*TAMANOPIXEL, TAMANOPIXEL*0.25, TAMANOPIXEL*0.25);
+        Rectangle2D.Double rec = new Rectangle2D.Double((this.x - 0.125) * TAMANOPIXEL, (this.y - 0.125) * TAMANOPIXEL, TAMANOPIXEL * 0.25, TAMANOPIXEL * 0.25);
         return rec;
     }
+
+    
 
 }

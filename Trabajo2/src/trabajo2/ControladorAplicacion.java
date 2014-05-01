@@ -6,9 +6,10 @@
 package trabajo2;
 
 import java.awt.HeadlessException;
+import java.awt.Point;
+import java.awt.Rectangle;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -122,7 +123,9 @@ public class ControladorAplicacion {
                         movimientoTaxis.start();
 
                     } catch (HeadlessException | NumberFormatException e) {
-                        movimientoTaxis.start();
+                        if (!movimientoTaxis.isRunning()) {
+                            movimientoTaxis.start();
+                        }
                         JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
                     }
                 } else {
@@ -138,6 +141,24 @@ public class ControladorAplicacion {
                 Ciudad ciudad = (Ciudad) interfaz.getCiudadSeleccionada();
                 if (ciudad != null) {
                     interfaz.fillComboxEscenarios(ciudad.getNumeroEscenarios());
+                }
+            }
+        });
+
+        interfaz.getBotonRutaCorta().addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
+                int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
+                int x2 = Integer.parseInt(JOptionPane.showInputDialog("X Final"));
+                int y2 = Integer.parseInt(JOptionPane.showInputDialog("Y Final"));
+                Ciudad ciudad = graficador.getCiudad();
+                List<Rectangle> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x1, y1), new Point(x2, y2));
+                if (rutaCorta != null) {
+                    graficador.dibujarRutaMasCercana(rutaCorta);
+                } else {
+                 JOptionPane.showMessageDialog(interfaz, "Error");
                 }
             }
         });
