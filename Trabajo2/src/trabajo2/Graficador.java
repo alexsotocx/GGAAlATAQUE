@@ -135,13 +135,14 @@ public class Graficador {
             graficos.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             Ciudad.dibujarSuelo(graficos);
             ciudad.dibujar(graficos);
+            graficos.setColor(Color.GREEN);
+            for (Rectangle pedazoRuta : ruta) {
+                graficos.fillRoundRect(pedazoRuta.x, pedazoRuta.y, pedazoRuta.width, pedazoRuta.height, 7, 7);
+            }
             for (Taxi taxi : taxis) {
                 taxi.dibujarTaxi(graficos);
             }
-            graficos.setColor(Color.GREEN);
-            for (Rectangle pedazoRuta : ruta) {
-                graficos.fillRoundRect(pedazoRuta.x,pedazoRuta.y,pedazoRuta.width,pedazoRuta.height,7,7);
-            }
+
             graficos.setTransform(saveTransform);
         }
 
