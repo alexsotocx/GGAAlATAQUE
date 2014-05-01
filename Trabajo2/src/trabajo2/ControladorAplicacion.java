@@ -181,7 +181,7 @@ public class ControladorAplicacion {
                 int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
                 int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
                 Point taxiMasCercano=getTaxiMasCercano(x1, y1);
-                Point edificioMasCercano=getEdificioMasCercano(x1, y1);
+                Point edificioMasCercano=getEdificioMasCercano(taxiMasCercano.x, taxiMasCercano.y);
                 Ciudad ciudad = graficador.getCiudad();
                 List<Rectangle> rutaCortaEdificio = ciudad.getRutaMasCortaEdificio(new Point(x1, y1), edificioMasCercano);
                 List<Rectangle> rutaCortaPersona = ciudad.getRutaMasCortaEdificio(edificioMasCercano, taxiMasCercano);

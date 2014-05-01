@@ -14,6 +14,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 public class Ciudad {
 
@@ -139,7 +140,7 @@ public class Ciudad {
             for (int i = 0; i < 4; i++) {
                 Point nodoVecino = new Point(nodo);
                 nodoVecino.move(nodo.x + MovimientoTaxis.dx[i], nodo.y + MovimientoTaxis.dy[i]);
-                if (puedoMoverme(tamanoRecorrido, nodoVecino)) {
+                if (puedoMoverme(tamanoRecorrido, nodoVecino) || clienteEnEdif(inicio, nodoVecino)) {
                     q.offer(nodoVecino);
                     tamanoRecorrido[nodoVecino.y][nodoVecino.x] = 1 + tamanoRecorrido[nodo.y][nodo.x];
                     recorrido[nodoVecino.y][nodoVecino.x] = nodo;
@@ -157,11 +158,20 @@ public class Ciudad {
         List<Rectangle> rectangulos = new ArrayList<>();
         Point puntoActual = new Point(fin);
         Point puntoAnterior = recorrido[fin.y][fin.x];
+        int auxEd=0;
+        int auxHu=0;
         while (!puntoAnterior.equals(inicio)) {
             rectangulos.add(crearLinea(puntoActual, puntoAnterior));
+            if (matrizActual[puntoAnterior.y][puntoAnterior.x]==1 && matrizActual[puntoActual.y][puntoActual.x]!=1) {
+                ++auxEd;
+            }
+            if (matrizActual[puntoAnterior.y][puntoAnterior.x]==-1 && matrizActual[puntoActual.y][puntoActual.x]!=-1) {
+                ++auxHu;
+            }
             puntoActual = puntoAnterior;
             puntoAnterior = recorrido[puntoAnterior.y][puntoAnterior.x];
         }
+        JOptionPane.showMessageDialog(null, "La ruta atraviesa "+auxEd+" edificios y "+auxHu+" huecos.");
         rectangulos.add(crearLinea(puntoActual, inicio));
         return rectangulos;
     }
@@ -176,6 +186,16 @@ public class Ciudad {
 
     private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux) {
         return nodoAux.x >= 0 && nodoAux.x < 101 && nodoAux.y >= 0 && nodoAux.y < 101 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1;
+    }
+    
+    !!private boolean clienteEnEdif(Point cliente, Point nodo){
+        List<Elemento> edificios=escenarioActual.getEdificios();
+        for (Elemento edif : edificios) {
+            if (edif.getRectangulo().contains(nodo) && edif.getRectangulo().contains(cliente)) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public List<Rectangle> getRutaMasCortaEdificio(Point inicio, Point fin) {
