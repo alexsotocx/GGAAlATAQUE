@@ -9,6 +9,7 @@ import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.RenderingHints;
 import java.awt.event.MouseEvent;
@@ -45,7 +46,20 @@ public class Graficador {
     private JPanel panelGraficador;
     private Ciudad ciudad;
     private List<Taxi> taxis;
+    private List<Point> rutaPuntos;
     private List<Rectangle> ruta;
+
+    public List<Rectangle> getRuta() {
+        return ruta;
+    }
+
+    public List<Point> getRutaPuntos() {
+        return rutaPuntos;
+    }
+
+    public void setRutaPuntos(List<Point> rutaPuntos) {
+        this.rutaPuntos = rutaPuntos;
+    }
 
     public List<Taxi> getTaxis() {
         return taxis;
@@ -54,6 +68,7 @@ public class Graficador {
     public Graficador() {
         this.taxis = new ArrayList<>();
         this.ruta = new ArrayList<>();
+        this.rutaPuntos = new ArrayList<>();
         lienzo = new Lienzo();
         manejadorEventos = new ManejadorEventos();
         lienzo.addMouseListener(manejadorEventos);
@@ -71,8 +86,10 @@ public class Graficador {
 
     public void graficarCiudad(Ciudad ciudad) {
         this.ciudad = ciudad;
+        ciudad.graf=this;
         this.taxis = new ArrayList<>();
         this.ruta = new ArrayList<>();
+        this.rutaPuntos = new ArrayList<>();
         lienzo.translateX = 0;
         lienzo.translateY = 0;
         barraZoom.setValue(100);
@@ -139,9 +156,11 @@ public class Graficador {
             graficos.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             Ciudad.dibujarSuelo(graficos);
             ciudad.dibujar(graficos);
-            graficos.setColor(Color.GREEN);
+            float hue=0.33f;
             for (Rectangle pedazoRuta : ruta) {
+                graficos.setColor(Color.getHSBColor(hue, 1f, 1f));
                 graficos.fillRoundRect(pedazoRuta.x, pedazoRuta.y, pedazoRuta.width, pedazoRuta.height, 7, 7);
+                hue+=0.5/ruta.size();
             }
             for (Taxi taxi : taxis) {
                 taxi.dibujarTaxi(graficos);

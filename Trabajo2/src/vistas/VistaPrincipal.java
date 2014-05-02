@@ -123,10 +123,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
         labelEscenario = new javax.swing.JLabel();
         jLabel5 = new javax.swing.JLabel();
         labelTaxis = new javax.swing.JLabel();
-        jLabel6 = new javax.swing.JLabel();
-        numEdifAtrav = new javax.swing.JLabel();
-        jLabel7 = new javax.swing.JLabel();
-        numHuecAtrav = new javax.swing.JLabel();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Segundo Trabajo de BD 2  - Graficación de ciudades");
@@ -277,20 +273,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
         labelTaxis.setText("0");
         jPanel3.add(labelTaxis);
 
-        jLabel6.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel6.setText("Edificios atravesados:");
-        jPanel3.add(jLabel6);
-
-        numEdifAtrav.setText("0");
-        jPanel3.add(numEdifAtrav);
-
-        jLabel7.setFont(new java.awt.Font("Tahoma", 1, 11)); // NOI18N
-        jLabel7.setText("Huecos atravesados:");
-        jPanel3.add(jLabel7);
-
-        numHuecAtrav.setText("0");
-        jPanel3.add(numHuecAtrav);
-
         panelGraficador.add(jPanel3, java.awt.BorderLayout.SOUTH);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -333,8 +315,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
-    private javax.swing.JLabel jLabel6;
-    private javax.swing.JLabel jLabel7;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;
@@ -342,26 +322,9 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JLabel labelCiudad;
     private javax.swing.JLabel labelEscenario;
     private javax.swing.JLabel labelTaxis;
-    private javax.swing.JLabel numEdifAtrav;
-    private javax.swing.JLabel numHuecAtrav;
     private javax.swing.JPanel panelGraficador;
     // End of variables declaration//GEN-END:variables
 
-    public int getNumEdifAtrav() {
-        return Integer.parseInt(numEdifAtrav.getText());
-    }
-
-    public void setNumEdifAtrav(int numEdifAtrav) {
-        this.numEdifAtrav.setText(String.valueOf(numEdifAtrav));
-    }
-
-    public int getNumHuecAtrav() {
-        return Integer.parseInt(numHuecAtrav.getText());
-    }
-
-    public void setNumHuecAtrav(int numHuecAtrav) {
-        this.numHuecAtrav.setText(String.valueOf(numHuecAtrav));
-    }
 
     public JButton getBotonAtravesarEdificio() {
         return botonAtravesarEdificio;
