@@ -20,7 +20,6 @@ import java.awt.event.MouseWheelListener;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
-import java.awt.geom.RoundRectangle2D;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.BorderFactory;
@@ -47,11 +46,6 @@ public class Graficador {
     private Ciudad ciudad;
     private List<Taxi> taxis;
     private List<Point> rutaPuntos;
-    private List<Rectangle> ruta;
-
-    public List<Rectangle> getRuta() {
-        return ruta;
-    }
 
     public List<Point> getRutaPuntos() {
         return rutaPuntos;
@@ -67,7 +61,6 @@ public class Graficador {
 
     public Graficador() {
         this.taxis = new ArrayList<>();
-        this.ruta = new ArrayList<>();
         this.rutaPuntos = new ArrayList<>();
         lienzo = new Lienzo();
         manejadorEventos = new ManejadorEventos();
@@ -86,9 +79,7 @@ public class Graficador {
 
     public void graficarCiudad(Ciudad ciudad) {
         this.ciudad = ciudad;
-        ciudad.graf=this;
         this.taxis = new ArrayList<>();
-        this.ruta = new ArrayList<>();
         this.rutaPuntos = new ArrayList<>();
         lienzo.translateX = 0;
         lienzo.translateY = 0;
@@ -110,8 +101,7 @@ public class Graficador {
         lienzo.repaint();
     }
 
-    public void dibujarRutaMasCercana(List<Rectangle> ruta) {
-        this.ruta = ruta;
+    public void dibujarRutaMasCercana() {
         panelGraficador.add(barraZoom, BorderLayout.WEST);
         panelGraficador.add(lienzo, BorderLayout.CENTER);
         panelGraficador.revalidate();
@@ -156,14 +146,23 @@ public class Graficador {
             graficos.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
             Ciudad.dibujarSuelo(graficos);
             ciudad.dibujar(graficos);
-            float hue=0.33f;
-            for (Rectangle pedazoRuta : ruta) {
-                graficos.setColor(Color.getHSBColor(hue, 1f, 1f));
-                graficos.fillRoundRect(pedazoRuta.x, pedazoRuta.y, pedazoRuta.width, pedazoRuta.height, 7, 7);
-                hue+=0.2/ruta.size();
-            }
-            for (Taxi taxi : taxis) {
+
+            List<Taxi> taxisEnCarrera = Taxi.getTaxisEnCarrera(taxis);
+            for (Taxi taxi : taxisEnCarrera) {
+                float hue = 0.33f;
+                List<Rectangle> rutaVisible = Ciudad.crearRutaGrafica(taxi.getRuta());
+                for (Rectangle pedazoRuta : rutaVisible) {
+                    graficos.setColor(Color.getHSBColor(hue, 1f, 1f));
+                    graficos.fillRoundRect(pedazoRuta.x, pedazoRuta.y, pedazoRuta.width, pedazoRuta.height, 7, 7);
+                    hue += 0.2 / rutaVisible.size();
+                }
                 taxi.dibujarTaxi(graficos);
+            }
+
+            for (Taxi taxi : taxis) {
+                if (!taxi.isEnCarrera()) {
+                    taxi.dibujarTaxi(graficos);
+                }
             }
 
             graficos.setTransform(saveTransform);

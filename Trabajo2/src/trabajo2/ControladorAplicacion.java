@@ -42,12 +42,12 @@ public class ControladorAplicacion {
     public void inicializar() {
         graficador.setPanelGraficador(interfaz.getPanelGrafico());
         ciudades = bdHelper.listarCiudades();
+        movimientoTaxis.setControladorAplicacion(this);
         iniciarInterfaz();
     }
 
     private void iniciarInterfaz() {
-        
-        
+
         interfaz.getBotonGraficar().addActionListener(new ActionListener() {
 
             @Override
@@ -151,52 +151,58 @@ public class ControladorAplicacion {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().size()==0) {
+                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().size() == 0) {
                     JOptionPane.showMessageDialog(interfaz, "No hay taxis o no están parados");
                     return;
                 }
                 int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
                 int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
-                if ((x1==0 || x1==100) && (y1==0 || y1==100)) {
+                if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
                     JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
                     return;
                 }
-                Point taxiMasCercano=getTaxiMasCercano(x1, y1);
+                Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
+                taxiMasCercano.setEnCarrera(true);
                 Ciudad ciudad = graficador.getCiudad();
-                List<Rectangle> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x1, y1), taxiMasCercano);
+                List<Point> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x1, y1), taxiMasCercano);
                 if (rutaCorta != null) {
-                    graficador.dibujarRutaMasCercana(rutaCorta);
-                    //recoger();
+                    taxiMasCercano.setRuta(rutaCorta);
+                    graficador.dibujarRutaMasCercana();
+                    interfaz.getBotonPararTaxis().setText("Parar");
+                    MovimientoTaxis.moverTaxis = true;
                 } else {
-                    JOptionPane.showMessageDialog(interfaz, "Error");
+                    JOptionPane.showMessageDialog(interfaz, "Error, no existe ruta posible");
                 }
             }
         });
-        
+
         interfaz.getBotonAtravesarEdificio().addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().size()==0) {
+                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().size() == 0) {
                     JOptionPane.showMessageDialog(interfaz, "No hay taxis o no están parados");
                     return;
                 }
                 int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
                 int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
-                if ((x1==0 || x1==100) && (y1==0 || y1==100)) {
+                if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
                     JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
                     return;
                 }
-                Point taxiMasCercano=getTaxiMasCercano(x1, y1);
-                Point edificioMasCercano=getEdificioMasCercano(taxiMasCercano.x, taxiMasCercano.y);
-                Ciudad ciudad = graficador.getCiudad();
-                List<Rectangle> rutaCortaEdificio = ciudad.getRutaMasCortaEdificio(new Point(x1, y1), edificioMasCercano, taxiMasCercano);
-                if (rutaCortaEdificio != null) {
-                    graficador.dibujarRutaMasCercana(rutaCortaEdificio);
-                    //recoger();
-                } else {
-                    JOptionPane.showMessageDialog(interfaz, "Error");
-                }
+//                Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
+//                taxiMasCercano.setEnCarrera(true);
+//                Point edificioMasCercano = getEdificioMasCercano(taxiMasCercano.x, taxiMasCercano.y);
+//                Ciudad ciudad = graficador.getCiudad();
+//                List<Rectangle> rutaCortaEdificio = ciudad.getRutaMasCortaEdificio(new Point(x1, y1), edificioMasCercano, taxiMasCercano);
+//                if (rutaCortaEdificio != null) {
+//                    //graficador.dibujarRutaMasCercana(rutaCortaEdificio);
+//                    //recoger();
+//                } else {
+//                    JOptionPane.showMessageDialog(interfaz, "Error");
+//                }
+//                interfaz.getBotonPararTaxis().setText("Parar");
+//                MovimientoTaxis.moverTaxis = true;
             }
 
         });
@@ -227,76 +233,85 @@ public class ControladorAplicacion {
     public void setGraficador(Graficador graficador) {
         this.graficador = graficador;
     }
-    
-    public Point getTaxiMasCercano(int x1, int y1){
-        taxis=graficador.getTaxis();
-        Point p=new Point();
-        double distMinima=140.007142675f;
-        double distActual;
+
+    private Taxi getTaxiMasCercano(int x1, int y1) {
+        taxis = graficador.getTaxis();
+        Taxi taxiCercano = null;
+        double distMinima = Double.MAX_VALUE;
+        double distActual = 0.0;
         for (Taxi taxi : taxis) {
-            distActual=Math.sqrt(Math.abs(x1-taxi.x)*Math.abs(x1-taxi.x)+Math.abs(y1-taxi.y)*Math.abs(y1-taxi.y));
+            if (taxi.isEnCarrera()) {
+                continue;
+            }
+            distActual = Math.sqrt(Math.abs(x1 - taxi.x) * Math.abs(x1 - taxi.x) + Math.abs(y1 - taxi.y) * Math.abs(y1 - taxi.y));
             if (distActual < distMinima) {
-                distMinima=distActual;
-                p=taxi;
+                distMinima = distActual;
+                taxiCercano = taxi;
             }
         }
-        return p;
+        return taxiCercano;
     }
-    
-    public Point getEdificioMasCercano(int x1, int y1){
-        int[][] matriz=graficador.getCiudad().getMatrizActual();
-        List<Point> unos=new ArrayList();
+
+    public Point getEdificioMasCercano(int x1, int y1) {
+        int[][] matriz = graficador.getCiudad().getMatrizActual();
+        List<Point> unos = new ArrayList();
         for (int i = 0; i < 101; i++) {
             for (int j = 0; j < 101; j++) {
-                if (matriz[j][i]==1) {
-                    unos.add(new Point(i,j));
+                if (matriz[j][i] == 1) {
+                    unos.add(new Point(i, j));
                 }
             }
         }
-        Point p=new Point();
-        double distMinima=140.007142675f;
+        Point p = new Point();
+        double distMinima = 140.007142675f;
         double distActual;
         for (Point uno : unos) {
-            distActual=Math.sqrt(Math.abs(x1-uno.x)*Math.abs(x1-uno.x)+Math.abs(y1-uno.y)*Math.abs(y1-uno.y));
+            distActual = Math.sqrt(Math.abs(x1 - uno.x) * Math.abs(x1 - uno.x) + Math.abs(y1 - uno.y) * Math.abs(y1 - uno.y));
             if (distActual < distMinima) {
-                distMinima=distActual;
-                p=uno;
+                distMinima = distActual;
+                p = uno;
             }
         }
         return p;
     }
-    
+
     private void recoger() {
-        taxis=graficador.getTaxis();
-        List<Point> ruta=graficador.getRutaPuntos();
-        List<Rectangle> rutaRect=graficador.getRuta();
-        Taxi t=null;
+        taxis = graficador.getTaxis();
+        List<Point> ruta = graficador.getRutaPuntos();
+        // List<Rectangle> rutaRect = graficador.getRuta();
+        Taxi t = null;
         for (Taxi tax : taxis) {
-            if (tax.x==ruta.get(0).x && tax.y==ruta.get(0).y) {
-                t=tax;
+            if (tax.x == ruta.get(0).x && tax.y == ruta.get(0).y) {
+                t = tax;
                 break;
             }
         }
-        if (t!=null) {
+        if (t != null) {
             ruta.remove(0);
-            rutaRect.remove(0);
-            while (ruta.size()>0) {
+            // rutaRect.remove(0);
+            while (ruta.size() > 0) {
                 System.out.println(ruta.get(0).x);
-                t.x=ruta.get(ruta.size()-1).x;
-                t.y=ruta.get(ruta.size()-1).y;
-                ruta.remove(ruta.size()-1);
-                rutaRect.remove(ruta.size()-1);
+                t.x = ruta.get(ruta.size() - 1).x;
+                t.y = ruta.get(ruta.size() - 1).y;
+                ruta.remove(ruta.size() - 1);
+                //              rutaRect.remove(ruta.size() - 1);
                 try {
                     Thread.sleep(100);
                 } catch (InterruptedException ex) {
                     Logger.getLogger(ControladorAplicacion.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 graficador.graficarTaxis(taxis);
-                graficador.dibujarRutaMasCercana(rutaRect);
+//                graficador.dibujarRutaMasCercana(rutaRect);
             }
         }
-        
+
     }
-    
+
+    public void setDestination(Taxi taxi) {
+        int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
+        int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
+        Ciudad ciudad = graficador.getCiudad();
+        taxi.setRuta(ciudad.getRutaMasCortaBFS(new Point(x2,y2), taxi));
+    }
 
 }

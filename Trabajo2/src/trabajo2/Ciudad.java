@@ -9,6 +9,7 @@ import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,7 +26,6 @@ public class Ciudad {
     private int[][] matrizActual;
     public static HashMap<String, TexturePaint> texturas;
     public static final int GROSOR_LINEA = Elemento.TAMANOPIXEL / 6;
-    public Graficador graf;
 
     public Ciudad(int id, int numeroEscenarios, String nombre) {
         this.id = id;
@@ -126,7 +126,7 @@ public class Ciudad {
      * @param fin punto final
      * @return lista de rectangulos a dibujar para mostrar la ruta más corta
      */
-    public List<Rectangle> getRutaMasCortaBFS(Point inicio, Point fin) {
+    public List<Point> getRutaMasCortaBFS(Point inicio, Point fin) {
         //Donde se van a guardar los próximos nodos(puntos) a recorrer
         Queue<Point> q = new LinkedList<>();
         q.offer(inicio);
@@ -155,144 +155,141 @@ public class Ciudad {
         }
     }
 
-    private List<Rectangle> construirRuta(Point[][] recorrido, Point inicio, Point fin) {
-        List<Rectangle> rectangulos = new ArrayList<>();
-        List<Point> ruta=new ArrayList<>();
+    private List<Point> construirRuta(Point[][] recorrido, Point inicio, Point fin) {
+        List<Point> ruta = new ArrayList<>();
         Point puntoActual = new Point(fin);
         Point puntoAnterior = recorrido[fin.y][fin.x];
         while (!puntoAnterior.equals(inicio)) {
             ruta.add(puntoActual);
-            rectangulos.add(crearLinea(puntoActual, puntoAnterior));
             puntoActual = puntoAnterior;
             puntoAnterior = recorrido[puntoAnterior.y][puntoAnterior.x];
         }
         ruta.add(puntoActual);
         ruta.add(inicio);
-        rectangulos.add(crearLinea(puntoActual, inicio));
-        graf.setRutaPuntos(ruta);
-        return rectangulos;
+        return ruta;
     }
 
-    private Rectangle crearLinea(Point puntoActual, Point puntoAnterior) {
-        int posX = Math.min(puntoActual.x, puntoAnterior.x) * Elemento.TAMANOPIXEL - GROSOR_LINEA/2;
-        int posY = Math.min(puntoActual.y, puntoAnterior.y) * Elemento.TAMANOPIXEL - GROSOR_LINEA/2;
-        int ancho = (puntoActual.x == puntoAnterior.x) ? GROSOR_LINEA : Math.abs(puntoActual.x - puntoAnterior.x) * Elemento.TAMANOPIXEL + GROSOR_LINEA;
-        int largo = (puntoActual.y == puntoAnterior.y) ? GROSOR_LINEA : Math.abs(puntoActual.y - puntoAnterior.y) * Elemento.TAMANOPIXEL + GROSOR_LINEA;
-        return (new Rectangle(posX, posY, ancho, largo));
+    public static List<Rectangle> crearRutaGrafica(List<Point> ruta) {
+        List<Rectangle> rutaVisible = new ArrayList<>();
+        for (int i = 0; i < ruta.size() - 1; i++) {
+            Point puntoActual = ruta.get(i);
+            Point puntoAnterior = ruta.get(i + 1);
+            int posX = Math.min(puntoActual.x, puntoAnterior.x) * Elemento.TAMANOPIXEL - GROSOR_LINEA / 2;
+            int posY = Math.min(puntoActual.y, puntoAnterior.y) * Elemento.TAMANOPIXEL - GROSOR_LINEA / 2;
+            int ancho = (puntoActual.x == puntoAnterior.x) ? GROSOR_LINEA : Math.abs(puntoActual.x - puntoAnterior.x) * Elemento.TAMANOPIXEL + GROSOR_LINEA;
+            int largo = (puntoActual.y == puntoAnterior.y) ? GROSOR_LINEA : Math.abs(puntoActual.y - puntoAnterior.y) * Elemento.TAMANOPIXEL + GROSOR_LINEA;
+            rutaVisible.add(new Rectangle(posX, posY, ancho, largo));
+        }
+        return rutaVisible;
     }
 
     private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux) {
         return nodoAux.x >= 0 && nodoAux.x < 101 && nodoAux.y >= 0 && nodoAux.y < 101 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1;
     }
-    
-    
-    public List<Rectangle> getRutaMasCortaEdificio(Point inicio, Point medio, Point fin) {
-        //Donde se van a guardar los próximos nodos(puntos) a recorrer
-        List<Rectangle> rutaEdifAPersona;
-        List<Rectangle> rutaTaxiAEdif;
-        Queue<Point> q = new LinkedList<>();
-        q.offer(inicio);
-        Point recorrido[][] = new Point[101][101]; //Donde se va a guardar el recorrido, se guarda como se llego a este nodo
-        int tamanoRecorrido[][] = new int[101][101];
-        while (!q.isEmpty()) {
-            Point nodo = q.poll();
-            if (nodo.equals(medio)) {
-                break;
-            }
-            //Recorrer todos los vecinos y encolarlos si nos podemos mover
-            for (int i = 0; i < 4; i++) {
-                Point nodoVecino = new Point(nodo);
-                nodoVecino.move(nodo.x + MovimientoTaxis.dx[i], nodo.y + MovimientoTaxis.dy[i]);
-                if (puedoMovermeEdificio(tamanoRecorrido, nodoVecino)) {
-                    q.offer(nodoVecino);
-                    tamanoRecorrido[nodoVecino.y][nodoVecino.x] = 1 + tamanoRecorrido[nodo.y][nodo.x];
-                    recorrido[nodoVecino.y][nodoVecino.x] = nodo;
-                }
-            }
-        }
-        rutaEdifAPersona=construirRutaEdificio(recorrido, inicio, medio, true);
-        int aux1=tamanoRecorrido[fin.y][fin.x];
-        q = new LinkedList<>();
-        q.offer(medio);
-        recorrido = new Point[101][101];
-        tamanoRecorrido = new int[101][101];
-        while (!q.isEmpty()) {
-            Point nodo = q.poll();
-            if (nodo.equals(fin)) {
-                break;
-            }
-            //Recorrer todos los vecinos y encolarlos si nos podemos mover
-            for (int i = 0; i < 4; i++) {
-                Point nodoVecino = new Point(nodo);
-                nodoVecino.move(nodo.x + MovimientoTaxis.dx[i], nodo.y + MovimientoTaxis.dy[i]);
-                if (puedoMovermeEdificio(tamanoRecorrido, nodoVecino)) {
-                    q.offer(nodoVecino);
-                    tamanoRecorrido[nodoVecino.y][nodoVecino.x] = 1 + tamanoRecorrido[nodo.y][nodo.x];
-                    recorrido[nodoVecino.y][nodoVecino.x] = nodo;
-                }
-            }
-        }
-        rutaTaxiAEdif=construirRutaEdificio(recorrido, medio, fin, false);
-        for (int i = 0; i < rutaEdifAPersona.size(); i++) {
-            rutaTaxiAEdif.add(rutaEdifAPersona.get(i));
-        }
-        if (aux1+tamanoRecorrido[fin.y][fin.x] == 0) {
-            return null;
-        } else {
-            return rutaTaxiAEdif;
-        }
-    }
-    
+
+//    public List<Rectangle> getRutaMasCortaEdificio(Point inicio, Point medio, Point fin) {
+//        //Donde se van a guardar los próximos nodos(puntos) a recorrer
+//        List<Rectangle> rutaEdifAPersona;
+//        List<Rectangle> rutaTaxiAEdif;
+//        Queue<Point> q = new LinkedList<>();
+//        q.offer(inicio);
+//        Point recorrido[][] = new Point[101][101]; //Donde se va a guardar el recorrido, se guarda como se llego a este nodo
+//        int tamanoRecorrido[][] = new int[101][101];
+//        while (!q.isEmpty()) {
+//            Point nodo = q.poll();
+//            if (nodo.equals(medio)) {
+//                break;
+//            }
+//            //Recorrer todos los vecinos y encolarlos si nos podemos mover
+//            for (int i = 0; i < 4; i++) {
+//                Point nodoVecino = new Point(nodo);
+//                nodoVecino.move(nodo.x + MovimientoTaxis.dx[i], nodo.y + MovimientoTaxis.dy[i]);
+//                if (puedoMovermeEdificio(tamanoRecorrido, nodoVecino)) {
+//                    q.offer(nodoVecino);
+//                    tamanoRecorrido[nodoVecino.y][nodoVecino.x] = 1 + tamanoRecorrido[nodo.y][nodo.x];
+//                    recorrido[nodoVecino.y][nodoVecino.x] = nodo;
+//                }
+//            }
+//        }
+////        rutaEdifAPersona = construirRutaEdificio(recorrido, inicio, medio, true);
+//        int aux1 = tamanoRecorrido[fin.y][fin.x];
+//        q = new LinkedList<>();
+//        q.offer(medio);
+//        recorrido = new Point[101][101];
+//        tamanoRecorrido = new int[101][101];
+//        while (!q.isEmpty()) {
+//            Point nodo = q.poll();
+//            if (nodo.equals(fin)) {
+//                break;
+//            }
+//            //Recorrer todos los vecinos y encolarlos si nos podemos mover
+//            for (int i = 0; i < 4; i++) {
+//                Point nodoVecino = new Point(nodo);
+//                nodoVecino.move(nodo.x + MovimientoTaxis.dx[i], nodo.y + MovimientoTaxis.dy[i]);
+//                if (puedoMovermeEdificio(tamanoRecorrido, nodoVecino)) {
+//                    q.offer(nodoVecino);
+//                    tamanoRecorrido[nodoVecino.y][nodoVecino.x] = 1 + tamanoRecorrido[nodo.y][nodo.x];
+//                    recorrido[nodoVecino.y][nodoVecino.x] = nodo;
+//                }
+//            }
+//        }
+//        rutaTaxiAEdif = construirRutaEdificio(recorrido, medio, fin, false);
+//        for (int i = 0; i < rutaEdifAPersona.size(); i++) {
+//            rutaTaxiAEdif.add(rutaEdifAPersona.get(i));
+//        }
+//        if (aux1 + tamanoRecorrido[fin.y][fin.x] == 0) {
+//            return null;
+//        } else {
+//            return rutaTaxiAEdif;
+//        }
+//    }
+
     private boolean puedoMovermeEdificio(int[][] tamanoRecorrido, Point nodoAux) {
         return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
     }
-    
-    private List<Rectangle> construirRutaEdificio(Point[][] recorrido, Point inicio, Point fin, boolean esPrimeraLLamada) {
-        List<Rectangle> rectangulos = new ArrayList<>();
-        List<Point> ruta=new ArrayList<>();
-        Point puntoActual = new Point(fin);
-        Point puntoAnterior = recorrido[fin.y][fin.x];
-        while (!puntoAnterior.equals(inicio)) {
-            ruta.add(puntoActual);
-            rectangulos.add(crearLinea(puntoActual, puntoAnterior));
-            puntoActual = puntoAnterior;
-            puntoAnterior = recorrido[puntoAnterior.y][puntoAnterior.x];
-        }
-        ruta.add(puntoActual);
-        ruta.add(inicio);
-        rectangulos.add(crearLinea(puntoActual, inicio));
-        if (esPrimeraLLamada) {
-            graf.setRutaPuntos(ruta);
-        }
-        else {
-            for (int i = 0; i < ruta.size(); i++) {
-                graf.getRutaPuntos().add(0, ruta.get(ruta.size()-i-1));
-            }
-            int contadorEdificios=0;
-            int contadorHuecos=0;
-            List<Point> ruta2=graf.getRutaPuntos();
-            //para que cuente bien hay que recorrer la lista de edificios y de huecos y usar el metodo contains
-            //CORREGIR
-            for (int i = 1; i < ruta2.size(); i++) {
-                if (matrizActual[ruta2.get(i).y][ruta2.get(i).x]==1 && matrizActual[ruta2.get(i-1).y][ruta2.get(i-1).x]!=1) {
-                    contadorEdificios++;
-                }
-                else if (matrizActual[ruta2.get(i).y][ruta2.get(i).x]==-1 && matrizActual[ruta2.get(i-1).y][ruta2.get(i-1).x]!=-1 && ruta2.get(i).x!=0 && ruta2.get(i).x!=100 && ruta2.get(i).y!=0 && ruta2.get(i).y!=100) {
-                    contadorHuecos++;
-                }
-            }
-            JOptionPane.showMessageDialog(null, "Se atravesaron "+contadorEdificios+" edificios y "+contadorHuecos+" huecos.");
-        }
-        return rectangulos;
-    }
 
+//    private List<Rectangle> construirRutaEdificio(Point[][] recorrido, Point inicio, Point fin, boolean esPrimeraLLamada) {
+//        List<Rectangle> rectangulos = new ArrayList<>();
+//        List<Point> ruta = new ArrayList<>();
+//        Point puntoActual = new Point(fin);
+//        Point puntoAnterior = recorrido[fin.y][fin.x];
+//        while (!puntoAnterior.equals(inicio)) {
+//            ruta.add(puntoActual);
+//            rectangulos.add(crearRutaGrafica(puntoActual, puntoAnterior));
+//            puntoActual = puntoAnterior;
+//            puntoAnterior = recorrido[puntoAnterior.y][puntoAnterior.x];
+//        }
+//        ruta.add(puntoActual);
+//        ruta.add(inicio);
+//        rectangulos.add(crearRutaGrafica(puntoActual, inicio));
+//        if (esPrimeraLLamada) {
+//            graf.setRutaPuntos(ruta);
+//        } else {
+//            for (int i = 0; i < ruta.size(); i++) {
+//                graf.getRutaPuntos().add(0, ruta.get(ruta.size() - i - 1));
+//            }
+//            int contadorEdificios = 0;
+//            int contadorHuecos = 0;
+//            List<Point> ruta2 = graf.getRutaPuntos();
+//            //para que cuente bien hay que recorrer la lista de edificios y de huecos y usar el metodo contains
+//            //CORREGIR
+//            for (int i = 1; i < ruta2.size(); i++) {
+//                if (matrizActual[ruta2.get(i).y][ruta2.get(i).x] == 1 && matrizActual[ruta2.get(i - 1).y][ruta2.get(i - 1).x] != 1) {
+//                    contadorEdificios++;
+//                } else if (matrizActual[ruta2.get(i).y][ruta2.get(i).x] == -1 && matrizActual[ruta2.get(i - 1).y][ruta2.get(i - 1).x] != -1 && ruta2.get(i).x != 0 && ruta2.get(i).x != 100 && ruta2.get(i).y != 0 && ruta2.get(i).y != 100) {
+//                    contadorHuecos++;
+//                }
+//            }
+//            JOptionPane.showMessageDialog(null, "Se atravesaron " + contadorEdificios + " edificios y " + contadorHuecos + " huecos.");
+//        }
+//        return rectangulos;
+//    }
     private void generarMatriz() {
         for (int i = 0; i < 101; i++) {
             for (int j = 0; j < 101; j++) {
                 if (i == 0 || i == 100 || j == 0 || j == 100) {
                     matrizActual[j][i] = -1;
-                }
-                else {
+                } else {
                     matrizActual[i][j] = 0;
                 }
             }

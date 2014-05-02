@@ -6,6 +6,7 @@
  */
 package trabajo2;
 
+import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,6 +21,7 @@ public class MovimientoTaxis extends Thread {
     private List<Taxi> taxis;
     private Ciudad ciudad;
     private Graficador graficador;
+    private ControladorAplicacion controladorAplicacion;
     public static boolean moverTaxis = false;
     public static boolean esperaInicio = false;
 
@@ -65,6 +67,22 @@ public class MovimientoTaxis extends Thread {
                 ArrayList<Integer> nroOpciones;//aloja las opciones posibles... op1:Arriba op2:derecha op3:abajo op4:izquierda
                 for (Taxi taxi : taxis) {
                     matriz[taxi.y][taxi.x] = 0;
+                    if (taxi.isEnCarrera()) {
+                        Point siguiente = taxi.siguientePosicion();
+                        taxi.removerPosicion();
+                        if (siguiente == null && taxi.getIndex() == 0) {
+                            taxi.incrementarIndex();
+                            controladorAplicacion.setDestination(taxi);
+                            continue;
+                        } else if (siguiente == null) {
+                            taxi.setEnCarrera(false);
+                            taxi.setIndex(0);
+                            continue;
+                        }
+                        matriz[siguiente.y][siguiente.x] = 2;
+                        taxi.setLocation(siguiente);
+                        continue;
+                    }
                     nroOpciones = new ArrayList();
                     for (int i = 0; i < 4; i++) {
                         if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1) {
@@ -84,7 +102,7 @@ public class MovimientoTaxis extends Thread {
                 break;
             }
             try {
-                hiloActual.sleep(2700);
+                hiloActual.sleep(1000);
             } catch (InterruptedException ex) {
                 break;
             }
@@ -105,5 +123,19 @@ public class MovimientoTaxis extends Thread {
 
     public boolean isRunning() {
         return hilo != null;
+    }
+
+    /**
+     * @return the controladorAplicacion
+     */
+    public ControladorAplicacion getControladorAplicacion() {
+        return controladorAplicacion;
+    }
+
+    /**
+     * @param controladorAplicacion the controladorAplicacion to set
+     */
+    public void setControladorAplicacion(ControladorAplicacion controladorAplicacion) {
+        this.controladorAplicacion = controladorAplicacion;
     }
 }

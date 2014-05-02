@@ -4,15 +4,16 @@ import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Point;
-import java.awt.Rectangle;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Queue;
 import static trabajo2.Elemento.TAMANOPIXEL;
 
-public class Taxi extends java.awt.Point {
+public class Taxi extends Point {
+
+    private List<Point> ruta;
+    private int index = 0;
+    private boolean enCarrera = false;
 
     public static List<Taxi> generarTaxisByCiudad(Ciudad c, int cantidad) {
         ArrayList<Taxi> taxis = new ArrayList<>();
@@ -30,14 +31,30 @@ public class Taxi extends java.awt.Point {
         return taxis;
     }
 
+    public static List<Taxi> getTaxisEnCarrera(List<Taxi> taxis) {
+        List<Taxi> taxisEnCarrera = new ArrayList<>();
+        for (Taxi taxi : taxis) {
+            if (taxi.isEnCarrera()) {
+                taxisEnCarrera.add(taxi);
+            }
+        }
+        return taxisEnCarrera;
+    }
+
     private Taxi(int x, int y) {
         super(x, y);
+        ruta = new ArrayList<>();
     }
 
     public void dibujarTaxi(Graphics2D graficos) {
         Rectangle2D recDibujar = getRectanguloVisible();
         graficos.setStroke(new BasicStroke(1));
-        graficos.setColor(Color.yellow);
+        if (!enCarrera) {
+            graficos.setColor(Color.yellow);
+        } else {
+            graficos.setColor(Color.red);
+        }
+
         graficos.fill(recDibujar);
     }
 
@@ -46,6 +63,60 @@ public class Taxi extends java.awt.Point {
         return rec;
     }
 
-    
+    /**
+     * @return the ruta
+     */
+    public List<Point> getRuta() {
+        return ruta;
+    }
 
+    /**
+     * @param ruta the ruta to set
+     */
+    public void setRuta(List<Point> ruta) {
+        this.ruta = ruta;
+    }
+
+    /**
+     * @return the enCarrera
+     */
+    public boolean isEnCarrera() {
+        return enCarrera;
+    }
+
+    /**
+     * @param enCarrera the enCarrera to set
+     */
+    public void setEnCarrera(boolean enCarrera) {
+        this.enCarrera = enCarrera;
+    }
+
+    public Point siguientePosicion() {
+        if (ruta.size() >= 2) {
+            return ruta.get(1);
+        } else {
+            return null;
+        }
+    }
+
+    public void removerPosicion() {
+        if (!ruta.isEmpty()) {
+            ruta.remove(0);
+        }
+    }
+
+    /**
+     * @return the index
+     */
+    public int getIndex() {
+        return index;
+    }
+
+    public void setIndex(int index) {
+        this.index = index;
+    }
+
+    public void incrementarIndex() {
+        index++;
+    }
 }
