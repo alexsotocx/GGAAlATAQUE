@@ -311,7 +311,13 @@ public class ControladorAplicacion {
         int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
         int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
         Ciudad ciudad = graficador.getCiudad();
-        taxi.setRuta(ciudad.getRutaMasCortaBFS(new Point(x2,y2), taxi));
+        taxi.setRuta(ciudad.getRutaMasCortaBFS(new Point(x2, y2), taxi));
+    }
+
+    public void notificarFinCarrera(Taxi taxi) {
+        taxi.setEnCarrera(false);
+        taxi.setIndex(0);
+        JOptionPane.showMessageDialog(interfaz, "Se finalizo la carrera\nValor de la carrera: " + taxi.getValorRuta() + "$");
     }
 
 }

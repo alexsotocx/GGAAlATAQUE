@@ -75,8 +75,8 @@ public class MovimientoTaxis extends Thread {
                             controladorAplicacion.setDestination(taxi);
                             continue;
                         } else if (siguiente == null) {
-                            taxi.setEnCarrera(false);
-                            taxi.setIndex(0);
+                            controladorAplicacion.notificarFinCarrera(taxi);
+                            
                             continue;
                         }
                         matriz[siguiente.y][siguiente.x] = 2;

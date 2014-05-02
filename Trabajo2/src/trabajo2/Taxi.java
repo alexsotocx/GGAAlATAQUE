@@ -14,6 +14,7 @@ public class Taxi extends Point {
     private List<Point> ruta;
     private int index = 0;
     private boolean enCarrera = false;
+    private int valorCarrera = 0;
 
     public static List<Taxi> generarTaxisByCiudad(Ciudad c, int cantidad) {
         ArrayList<Taxi> taxis = new ArrayList<>();
@@ -75,6 +76,7 @@ public class Taxi extends Point {
      */
     public void setRuta(List<Point> ruta) {
         this.ruta = ruta;
+        valorCarrera = ruta.size();
     }
 
     /**
@@ -118,5 +120,9 @@ public class Taxi extends Point {
 
     public void incrementarIndex() {
         index++;
+    }
+
+    public int getValorRuta() {
+        return (valorCarrera * 100 + 2400);
     }
 }
