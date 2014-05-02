@@ -188,8 +188,8 @@ public class Ciudad {
     
     public List<Rectangle> getRutaMasCortaEdificio(Point inicio, Point medio, Point fin) {
         //Donde se van a guardar los próximos nodos(puntos) a recorrer
-        List<Rectangle> rutafinal;
-        List<Rectangle> ruta2;
+        List<Rectangle> rutaEdifAPersona;
+        List<Rectangle> rutaTaxiAEdif;
         Queue<Point> q = new LinkedList<>();
         q.offer(inicio);
         Point recorrido[][] = new Point[101][101]; //Donde se va a guardar el recorrido, se guarda como se llego a este nodo
@@ -210,7 +210,7 @@ public class Ciudad {
                 }
             }
         }
-        rutafinal=construirRutaEdificio(recorrido, inicio, medio, true);
+        rutaEdifAPersona=construirRutaEdificio(recorrido, inicio, medio, true);
         int aux1=tamanoRecorrido[fin.y][fin.x];
         q = new LinkedList<>();
         q.offer(medio);
@@ -232,14 +232,14 @@ public class Ciudad {
                 }
             }
         }
-        ruta2=construirRutaEdificio(recorrido, medio, fin, false);
-        for (int i = 0; i < rutafinal.size(); i++) {
-            ruta2.add(rutafinal.get(i));
+        rutaTaxiAEdif=construirRutaEdificio(recorrido, medio, fin, false);
+        for (int i = 0; i < rutaEdifAPersona.size(); i++) {
+            rutaTaxiAEdif.add(rutaEdifAPersona.get(i));
         }
         if (aux1+tamanoRecorrido[fin.y][fin.x] == 0) {
             return null;
         } else {
-            return ruta2;
+            return rutaTaxiAEdif;
         }
     }
     
@@ -247,7 +247,7 @@ public class Ciudad {
         return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
     }
     
-    private List<Rectangle> construirRutaEdificio(Point[][] recorrido, Point inicio, Point fin, boolean primera) {
+    private List<Rectangle> construirRutaEdificio(Point[][] recorrido, Point inicio, Point fin, boolean esPrimeraLLamada) {
         List<Rectangle> rectangulos = new ArrayList<>();
         List<Point> ruta=new ArrayList<>();
         Point puntoActual = new Point(fin);
@@ -261,16 +261,18 @@ public class Ciudad {
         ruta.add(puntoActual);
         ruta.add(inicio);
         rectangulos.add(crearLinea(puntoActual, inicio));
-        if (primera) {
+        if (esPrimeraLLamada) {
             graf.setRutaPuntos(ruta);
         }
         else {
             for (int i = 0; i < ruta.size(); i++) {
-                graf.getRutaPuntos().add(ruta.get(i));
+                graf.getRutaPuntos().add(0, ruta.get(ruta.size()-i-1));
             }
             int contadorEdificios=0;
             int contadorHuecos=0;
             List<Point> ruta2=graf.getRutaPuntos();
+            //para que cuente bien hay que recorrer la lista de edificios y de huecos y usar el metodo contains
+            //CORREGIR
             for (int i = 1; i < ruta2.size(); i++) {
                 if (matrizActual[ruta2.get(i).y][ruta2.get(i).x]==1 && matrizActual[ruta2.get(i-1).y][ruta2.get(i-1).x]!=1) {
                     contadorEdificios++;

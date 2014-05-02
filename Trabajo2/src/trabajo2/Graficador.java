@@ -160,7 +160,7 @@ public class Graficador {
             for (Rectangle pedazoRuta : ruta) {
                 graficos.setColor(Color.getHSBColor(hue, 1f, 1f));
                 graficos.fillRoundRect(pedazoRuta.x, pedazoRuta.y, pedazoRuta.width, pedazoRuta.height, 7, 7);
-                hue+=0.5/ruta.size();
+                hue+=0.2/ruta.size();
             }
             for (Taxi taxi : taxis) {
                 taxi.dibujarTaxi(graficos);
