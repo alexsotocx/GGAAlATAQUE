@@ -157,6 +157,10 @@ public class ControladorAplicacion {
                         JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
                         return;
                     }
+                    if (graficador.getCiudad().getMatrizActual()[y1][x1]==-1) {
+                        JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
+                        return;
+                    }
                     Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
                     Ciudad ciudad = graficador.getCiudad();
                     List<Point> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x1, y1), taxiMasCercano);
@@ -193,6 +197,10 @@ public class ControladorAplicacion {
                         JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
                         return;
                     }*/
+                    if (graficador.getCiudad().getMatrizActual()[y1][x1]==-1) {
+                        JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
+                        return;
+                    }
                     Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
                     Point edificioMasCercano = getEdificioMasCercano(taxiMasCercano.x, taxiMasCercano.y);
                     Ciudad ciudad = graficador.getCiudad();
@@ -289,6 +297,10 @@ public class ControladorAplicacion {
         try {
             int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
             int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
+            if (graficador.getCiudad().getMatrizActual()[y2][x2]==-1) {
+                JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
+                return;
+            }
             Ciudad ciudad = graficador.getCiudad();
             taxi.setRuta(ciudad.getRutaMasCortaBFS(new Point(x2, y2), taxi));
         } catch (HeadlessException | NumberFormatException e) {
@@ -300,6 +312,10 @@ public class ControladorAplicacion {
         try {
             int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
             int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
+            if (graficador.getCiudad().getMatrizActual()[y2][x2]==-1) {
+                JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
+                return;
+            }
             Ciudad ciudad = graficador.getCiudad();
             taxi.setRuta(ciudad.getRutaMasCortaEdificio(new Point(x2, y2), getEdificioMasCercano(taxi.x, taxi.y), taxi));
         } catch (HeadlessException | NumberFormatException e) {
