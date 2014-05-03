@@ -9,6 +9,7 @@ package trabajo2;
 import java.awt.Point;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -69,7 +70,7 @@ public class MovimientoTaxis extends Thread {
                     if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
                         matriz[taxi.y][taxi.x] = 0;
                     }
-                    if (taxi.isEnCarrera()) {
+                    if (taxi.isEnCarrera5()) {
                         Point siguiente = taxi.siguientePosicion();
                         taxi.removerPosicion();
                         if (siguiente == null && taxi.getIndex() == 0) {
@@ -87,16 +88,56 @@ public class MovimientoTaxis extends Thread {
                         taxi.setLocation(siguiente);
                         continue;
                     }
+                    if (taxi.isEnCarrera4()) {
+                        Point siguiente = taxi.siguientePosicion();
+                        taxi.removerPosicion();
+                        if (siguiente == null && taxi.getIndex() == 0) {
+                            taxi.incrementarIndex();
+                            controladorAplicacion.setDestination4(taxi);
+                            continue;
+                        } else if (siguiente == null) {
+
+                            controladorAplicacion.notificarFinCarrera(taxi);
+                            continue;
+                        }
+                        if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
+                            matriz[taxi.y][taxi.x] = 2;
+                        }
+                        taxi.setLocation(siguiente);
+                        continue;
+                    }
                     nroOpciones = new ArrayList();
-                    for (int i = 0; i < 4; i++) {
-                        if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1) {
-                            nroOpciones.add(i + 1);
+                    if (taxi.x==0) {
+                        nroOpciones.add(3);
+                    }
+                    else if (taxi.x==100) {
+                        nroOpciones.add(1);
+                    }
+                    else if (taxi.y==0) {
+                        nroOpciones.add(2);
+                    }
+                    else if (taxi.y==100) {
+                        nroOpciones.add(4);
+                    }
+                    else {
+                        for (int i = 0; i < 4; i++) {
+                           if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1) {
+                                nroOpciones.add(i + 1);
+                            }
                         }
                     }
                     opcionElegida = (nroOpciones.size() > 0) ? nroOpciones.get((int) (Math.random() * nroOpciones.size())) : 5;
                     if (opcionElegida != 5) {
                         taxi.y += dy[opcionElegida - 1];
                         taxi.x += dx[opcionElegida - 1];
+                        if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
+                            matriz[taxi.y][taxi.x] = 2;
+                        }
+                    } else {
+                        //el taxi no se puede mover
+                        JOptionPane.showMessageDialog(null, "El taxi no se puede mover. Ingrese una posición válida");
+                        taxi.x = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
+                        taxi.y = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
                         if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
                             matriz[taxi.y][taxi.x] = 2;
                         }

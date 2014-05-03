@@ -147,8 +147,18 @@ public class Graficador {
             Ciudad.dibujarSuelo(graficos);
             ciudad.dibujar(graficos);
 
-            List<Taxi> taxisEnCarrera = Taxi.getTaxisEnCarrera(taxis);
-            for (Taxi taxi : taxisEnCarrera) {
+            List<Taxi> taxisEnCarrera4 = Taxi.getTaxisEnCarrera4(taxis);
+            for (Taxi taxi : taxisEnCarrera4) {
+                float hue = 0.66f;
+                List<Rectangle> rutaVisible = Ciudad.crearRutaGrafica(taxi.getRuta());
+                for (Rectangle pedazoRuta : rutaVisible) {
+                    graficos.setColor(Color.getHSBColor(hue, 1f, 1f));
+                    graficos.fillRoundRect(pedazoRuta.x, pedazoRuta.y, pedazoRuta.width, pedazoRuta.height, 7, 7);
+                    hue += 0.2 / rutaVisible.size();
+                }
+            }
+            List<Taxi> taxisEnCarrera5 = Taxi.getTaxisEnCarrera5(taxis);
+            for (Taxi taxi : taxisEnCarrera5) {
                 float hue = 0.33f;
                 List<Rectangle> rutaVisible = Ciudad.crearRutaGrafica(taxi.getRuta());
                 for (Rectangle pedazoRuta : rutaVisible) {
@@ -159,11 +169,14 @@ public class Graficador {
             }
 
             for (Taxi taxi : taxis) {
-                if (!taxi.isEnCarrera()) {
+                if (!taxi.isEnCarrera4() && !taxi.isEnCarrera5()) {
                     taxi.dibujarTaxi(graficos);
                 }
             }
-            for (Taxi taxi : taxisEnCarrera) {
+            for (Taxi taxi : taxisEnCarrera4) {
+                taxi.dibujarTaxi(graficos);
+            }
+            for (Taxi taxi : taxisEnCarrera5) {
                 taxi.dibujarTaxi(graficos);
             }
             graficos.setTransform(saveTransform);

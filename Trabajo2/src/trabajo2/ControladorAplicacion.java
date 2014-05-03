@@ -158,10 +158,10 @@ public class ControladorAplicacion {
                         return;
                     }
                     Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
-                    taxiMasCercano.setEnCarrera(true);
                     Ciudad ciudad = graficador.getCiudad();
                     List<Point> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x1, y1), taxiMasCercano);
                     if (!rutaCorta.isEmpty()) {
+                        taxiMasCercano.setEnCarrera5(true);
                         taxiMasCercano.setRuta(rutaCorta);
                         graficador.dibujarRutaMasCercana();
                         interfaz.getBotonPararTaxis().setText("Parar");
@@ -186,25 +186,32 @@ public class ControladorAplicacion {
                     JOptionPane.showMessageDialog(interfaz, "No hay taxis o no están parados");
                     return;
                 }
-                int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
-                int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
-                if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
-                    JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
-                    return;
+                try {
+                    int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
+                    int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
+                    /*if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
+                        JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
+                        return;
+                    }*/
+                    Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
+                    Point edificioMasCercano = getEdificioMasCercano(taxiMasCercano.x, taxiMasCercano.y);
+                    Ciudad ciudad = graficador.getCiudad();
+                    List<Point> rutaCorta = ciudad.getRutaMasCortaEdificio(new Point(x1, y1), edificioMasCercano, taxiMasCercano);
+                    if (!rutaCorta.isEmpty()) {
+                        taxiMasCercano.setEnCarrera4(true);
+                        taxiMasCercano.setRuta(rutaCorta);
+                        graficador.dibujarRutaMasCercana();
+                        interfaz.getBotonPararTaxis().setText("Parar");
+                        MovimientoTaxis.moverTaxis = true;
+                    } else {
+                        JOptionPane.showMessageDialog(interfaz, "Error, no existe ruta posible");
+                    }
+                } catch (HeadlessException | NumberFormatException ex) {
+                    if (!movimientoTaxis.isRunning()) {
+                        movimientoTaxis.start();
+                    }
+                    JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
                 }
-//                Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
-//                taxiMasCercano.setEnCarrera(true);
-//                Point edificioMasCercano = getEdificioMasCercano(taxiMasCercano.x, taxiMasCercano.y);
-//                Ciudad ciudad = graficador.getCiudad();
-//                List<Rectangle> rutaCortaEdificio = ciudad.getRutaMasCortaEdificio(new Point(x1, y1), edificioMasCercano, taxiMasCercano);
-//                if (rutaCortaEdificio != null) {
-//                    //graficador.dibujarRutaMasCercana(rutaCortaEdificio);
-//                    //recoger();
-//                } else {
-//                    JOptionPane.showMessageDialog(interfaz, "Error");
-//                }
-//                interfaz.getBotonPararTaxis().setText("Parar");
-//                MovimientoTaxis.moverTaxis = true;
             }
 
         });
@@ -277,37 +284,6 @@ public class ControladorAplicacion {
         return p;
     }
 
-    private void recoger() {
-        taxis = graficador.getTaxis();
-        List<Point> ruta = graficador.getRutaPuntos();
-        // List<Rectangle> rutaRect = graficador.getRuta();
-        Taxi t = null;
-        for (Taxi tax : taxis) {
-            if (tax.x == ruta.get(0).x && tax.y == ruta.get(0).y) {
-                t = tax;
-                break;
-            }
-        }
-        if (t != null) {
-            ruta.remove(0);
-            // rutaRect.remove(0);
-            while (ruta.size() > 0) {
-                System.out.println(ruta.get(0).x);
-                t.x = ruta.get(ruta.size() - 1).x;
-                t.y = ruta.get(ruta.size() - 1).y;
-                ruta.remove(ruta.size() - 1);
-                //              rutaRect.remove(ruta.size() - 1);
-                try {
-                    Thread.sleep(100);
-                } catch (InterruptedException ex) {
-                    Logger.getLogger(ControladorAplicacion.class.getName()).log(Level.SEVERE, null, ex);
-                }
-                graficador.graficarTaxis(taxis);
-//                graficador.dibujarRutaMasCercana(rutaRect);
-            }
-        }
-
-    }
 
     public void setDestination(Taxi taxi) {
         try {
@@ -320,11 +296,23 @@ public class ControladorAplicacion {
             this.setDestination(taxi);
         }
     }
+    public void setDestination4(Taxi taxi) {
+        try {
+            int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
+            int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
+            Ciudad ciudad = graficador.getCiudad();
+            taxi.setRuta(ciudad.getRutaMasCortaEdificio(new Point(x2, y2), getEdificioMasCercano(taxi.x, taxi.y), taxi));
+        } catch (HeadlessException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
+            this.setDestination4(taxi);
+        }
+    }
 
     public void notificarFinCarrera(Taxi taxi) {
-        taxi.setEnCarrera(false);
+        taxi.setEnCarrera5(false);
+        taxi.setEnCarrera4(false);
         taxi.setIndex(0);
-        JOptionPane.showMessageDialog(interfaz, "Se finalizo la carrera\nValor de la carrera: " + taxi.getValorRuta() + "$");
+        JOptionPane.showMessageDialog(interfaz, "Se finalizo la carrera\nValor de la carrera: $" + taxi.getValorRuta());
     }
 
 }

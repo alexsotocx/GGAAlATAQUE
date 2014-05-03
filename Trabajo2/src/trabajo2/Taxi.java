@@ -13,7 +13,8 @@ public class Taxi extends Point {
 
     private List<Point> ruta;
     private int index = 0;
-    private boolean enCarrera = false;
+    private boolean enCarrera4 = false;
+    private boolean enCarrera5 = false;
     private int valorCarrera = 0;
 
     public static List<Taxi> generarTaxisByCiudad(Ciudad c, int cantidad) {
@@ -32,10 +33,19 @@ public class Taxi extends Point {
         return taxis;
     }
 
-    public static List<Taxi> getTaxisEnCarrera(List<Taxi> taxis) {
+    public static List<Taxi> getTaxisEnCarrera5(List<Taxi> taxis) {
         List<Taxi> taxisEnCarrera = new ArrayList<>();
         for (Taxi taxi : taxis) {
-            if (taxi.isEnCarrera()) {
+            if (taxi.isEnCarrera5()) {
+                taxisEnCarrera.add(taxi);
+            }
+        }
+        return taxisEnCarrera;
+    }
+    public static List<Taxi> getTaxisEnCarrera4(List<Taxi> taxis) {
+        List<Taxi> taxisEnCarrera = new ArrayList<>();
+        for (Taxi taxi : taxis) {
+            if (taxi.isEnCarrera4()) {
                 taxisEnCarrera.add(taxi);
             }
         }
@@ -50,10 +60,12 @@ public class Taxi extends Point {
     public void dibujarTaxi(Graphics2D graficos) {
         Rectangle2D recDibujar = getRectanguloVisible();
         graficos.setStroke(new BasicStroke(1));
-        if (!enCarrera) {
+        if (!enCarrera5 && !enCarrera4) {
             graficos.setColor(Color.yellow);
-        } else {
+        } else if (enCarrera5) {
             graficos.setColor(Color.red);
+        } else {
+            graficos.setColor(Color.cyan);
         }
 
         graficos.fill(recDibujar);
@@ -83,16 +95,26 @@ public class Taxi extends Point {
      * @return the enCarrera
      */
     public boolean isEnCarrera() {
-        return enCarrera;
+        return enCarrera5 || enCarrera4;
+    }
+    public boolean isEnCarrera4() {
+        return enCarrera4;
+    }
+    public boolean isEnCarrera5() {
+        return enCarrera5;
     }
 
     /**
      * @param enCarrera the enCarrera to set
      */
-    public void setEnCarrera(boolean enCarrera) {
-        this.enCarrera = enCarrera;
+    public void setEnCarrera5(boolean enCarrera) {
+        this.enCarrera5 = enCarrera;
     }
-
+    
+    public void setEnCarrera4(boolean enCarrera) {
+        this.enCarrera4 = enCarrera;
+    }
+    
     public Point siguientePosicion() {
         if (ruta.size() >= 2) {
             return ruta.get(1);
