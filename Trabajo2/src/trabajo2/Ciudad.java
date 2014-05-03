@@ -131,7 +131,9 @@ public class Ciudad {
         Queue<Point> q = new LinkedList<>();
         q.offer(inicio);
         Point recorrido[][] = new Point[101][101]; //Donde se va a guardar el recorrido, se guarda como se llego a este nodo
+        recorrido[inicio.y][inicio.x] = inicio;
         int tamanoRecorrido[][] = new int[101][101];
+        
         while (!q.isEmpty()) {
             Point nodo = q.poll();
             if (nodo.equals(fin)) {
@@ -148,8 +150,8 @@ public class Ciudad {
                 }
             }
         }
-        if (tamanoRecorrido[fin.y][fin.x] == 0) {
-            return null;
+        if (recorrido[fin.y][fin.x] == null) {
+            return new ArrayList<>();
         } else {
             return construirRuta(recorrido, inicio, fin);
         }
@@ -184,7 +186,7 @@ public class Ciudad {
     }
 
     private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux) {
-        return nodoAux.x >= 0 && nodoAux.x < 101 && nodoAux.y >= 0 && nodoAux.y < 101 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1;
+        return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1;
     }
 
 //    public List<Rectangle> getRutaMasCortaEdificio(Point inicio, Point medio, Point fin) {

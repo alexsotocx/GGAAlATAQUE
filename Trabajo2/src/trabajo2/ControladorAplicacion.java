@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package trabajo2;
 
 import java.awt.HeadlessException;
@@ -116,7 +111,7 @@ public class ControladorAplicacion {
                         taxis = Taxi.generarTaxisByCiudad(ciudad, cantTaxis);
                         graficador.graficarTaxis(taxis);
                         interfaz.setLabelTaxis(cantTaxis);
-                        movimientoTaxis.esperaInicio = true;
+                        MovimientoTaxis.esperaInicio = true;
                         movimientoTaxis.setCiudad(ciudad);
                         movimientoTaxis.setTaxis(taxis);
                         movimientoTaxis.setGraficador(graficador);
@@ -151,27 +146,34 @@ public class ControladorAplicacion {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().size() == 0) {
+                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().isEmpty()) {
                     JOptionPane.showMessageDialog(interfaz, "No hay taxis o no están parados");
                     return;
                 }
-                int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
-                int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
-                if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
-                    JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
-                    return;
-                }
-                Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
-                taxiMasCercano.setEnCarrera(true);
-                Ciudad ciudad = graficador.getCiudad();
-                List<Point> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x1, y1), taxiMasCercano);
-                if (rutaCorta != null) {
-                    taxiMasCercano.setRuta(rutaCorta);
-                    graficador.dibujarRutaMasCercana();
-                    interfaz.getBotonPararTaxis().setText("Parar");
-                    MovimientoTaxis.moverTaxis = true;
-                } else {
-                    JOptionPane.showMessageDialog(interfaz, "Error, no existe ruta posible");
+                try {
+                    int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
+                    int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
+                    if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
+                        JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
+                        return;
+                    }
+                    Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
+                    taxiMasCercano.setEnCarrera(true);
+                    Ciudad ciudad = graficador.getCiudad();
+                    List<Point> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x1, y1), taxiMasCercano);
+                    if (!rutaCorta.isEmpty()) {
+                        taxiMasCercano.setRuta(rutaCorta);
+                        graficador.dibujarRutaMasCercana();
+                        interfaz.getBotonPararTaxis().setText("Parar");
+                        MovimientoTaxis.moverTaxis = true;
+                    } else {
+                        JOptionPane.showMessageDialog(interfaz, "Error, no existe ruta posible");
+                    }
+                } catch (HeadlessException | NumberFormatException ex) {
+                    if (!movimientoTaxis.isRunning()) {
+                        movimientoTaxis.start();
+                    }
+                    JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
                 }
             }
         });
@@ -180,7 +182,7 @@ public class ControladorAplicacion {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().size() == 0) {
+                if (interfaz.getBotonPararTaxis().getText().equals("Parar") || graficador.getTaxis().isEmpty()) {
                     JOptionPane.showMessageDialog(interfaz, "No hay taxis o no están parados");
                     return;
                 }
@@ -308,10 +310,15 @@ public class ControladorAplicacion {
     }
 
     public void setDestination(Taxi taxi) {
-        int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
-        int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
-        Ciudad ciudad = graficador.getCiudad();
-        taxi.setRuta(ciudad.getRutaMasCortaBFS(new Point(x2, y2), taxi));
+        try {
+            int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
+            int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
+            Ciudad ciudad = graficador.getCiudad();
+            taxi.setRuta(ciudad.getRutaMasCortaBFS(new Point(x2, y2), taxi));
+        } catch (HeadlessException | NumberFormatException e) {
+            JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
+            this.setDestination(taxi);
+        }
     }
 
     public void notificarFinCarrera(Taxi taxi) {

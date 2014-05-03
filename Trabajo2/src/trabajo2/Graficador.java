@@ -156,7 +156,6 @@ public class Graficador {
                     graficos.fillRoundRect(pedazoRuta.x, pedazoRuta.y, pedazoRuta.width, pedazoRuta.height, 7, 7);
                     hue += 0.2 / rutaVisible.size();
                 }
-                taxi.dibujarTaxi(graficos);
             }
 
             for (Taxi taxi : taxis) {
@@ -164,7 +163,9 @@ public class Graficador {
                     taxi.dibujarTaxi(graficos);
                 }
             }
-
+            for (Taxi taxi : taxisEnCarrera) {
+                taxi.dibujarTaxi(graficos);
+            }
             graficos.setTransform(saveTransform);
         }
 

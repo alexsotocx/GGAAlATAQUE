@@ -66,7 +66,9 @@ public class MovimientoTaxis extends Thread {
                 int opcionElegida;
                 ArrayList<Integer> nroOpciones;//aloja las opciones posibles... op1:Arriba op2:derecha op3:abajo op4:izquierda
                 for (Taxi taxi : taxis) {
-                    matriz[taxi.y][taxi.x] = 0;
+                    if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
+                        matriz[taxi.y][taxi.x] = 0;
+                    }
                     if (taxi.isEnCarrera()) {
                         Point siguiente = taxi.siguientePosicion();
                         taxi.removerPosicion();
@@ -75,11 +77,13 @@ public class MovimientoTaxis extends Thread {
                             controladorAplicacion.setDestination(taxi);
                             continue;
                         } else if (siguiente == null) {
+
                             controladorAplicacion.notificarFinCarrera(taxi);
-                            
                             continue;
                         }
-                        matriz[siguiente.y][siguiente.x] = 2;
+                        if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
+                            matriz[taxi.y][taxi.x] = 2;
+                        }
                         taxi.setLocation(siguiente);
                         continue;
                     }
@@ -93,7 +97,9 @@ public class MovimientoTaxis extends Thread {
                     if (opcionElegida != 5) {
                         taxi.y += dy[opcionElegida - 1];
                         taxi.x += dx[opcionElegida - 1];
-                        matriz[taxi.y][taxi.x] = 2;
+                        if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
+                            matriz[taxi.y][taxi.x] = 2;
+                        }
                     }
                 }
                 if (moverTaxis) {
