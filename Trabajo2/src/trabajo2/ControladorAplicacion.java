@@ -102,8 +102,8 @@ public class ControladorAplicacion {
                     }
                     try {
                         cantTaxis = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la cantidad de taxis"));
-                        if (cantTaxis < 1) {
-                            cantTaxis = 1;
+                        if (cantTaxis < 0) {
+                            cantTaxis = 0;
                         } else if (cantTaxis > cantMax) {
                             cantTaxis = cantMax;
                         }
@@ -157,7 +157,7 @@ public class ControladorAplicacion {
                         JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
                         return;
                     }
-                    if (graficador.getCiudad().getMatrizActual()[y1][x1]==-1) {
+                    if (graficador.getCiudad().getMatrizActual()[y1][x1] == -1) {
                         JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
                         return;
                     }
@@ -194,10 +194,10 @@ public class ControladorAplicacion {
                     int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
                     int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
                     /*if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
-                        JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
-                        return;
-                    }*/
-                    if (graficador.getCiudad().getMatrizActual()[y1][x1]==-1) {
+                     JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
+                     return;
+                     }*/
+                    if (graficador.getCiudad().getMatrizActual()[y1][x1] == -1) {
                         JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
                         return;
                     }
@@ -205,9 +205,11 @@ public class ControladorAplicacion {
                     Point edificioMasCercano = getEdificioMasCercano(taxiMasCercano.x, taxiMasCercano.y);
                     Ciudad ciudad = graficador.getCiudad();
                     List<Point> rutaCorta = ciudad.getRutaMasCortaEdificio(new Point(x1, y1), edificioMasCercano, taxiMasCercano);
-                    if (!rutaCorta.isEmpty()) {
+                    if (rutaCorta != null) {
                         taxiMasCercano.setEnCarrera4(true);
                         taxiMasCercano.setRuta(rutaCorta);
+                        taxiMasCercano.setElementosAtravesados(new boolean[ciudad.getPuntosPorElemento().size()]);
+                        taxiMasCercano.calcularElementosAtravesados(ciudad.getPuntosPorElemento());
                         graficador.dibujarRutaMasCercana();
                         interfaz.getBotonPararTaxis().setText("Parar");
                         MovimientoTaxis.moverTaxis = true;
@@ -292,41 +294,61 @@ public class ControladorAplicacion {
         return p;
     }
 
-
     public void setDestination(Taxi taxi) {
         try {
             int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
             int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
-            if (graficador.getCiudad().getMatrizActual()[y2][x2]==-1) {
+            if (graficador.getCiudad().getMatrizActual()[y2][x2] == -1) {
                 JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
                 return;
             }
             Ciudad ciudad = graficador.getCiudad();
-            taxi.setRuta(ciudad.getRutaMasCortaBFS(new Point(x2, y2), taxi));
+            List<Point> rutaCorta = ciudad.getRutaMasCortaBFS(new Point(x2, y2), taxi);
+            if (!rutaCorta.isEmpty()) {
+                taxi.setRuta(rutaCorta);
+            }
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
             this.setDestination(taxi);
+        } catch (NullPointerException ex) {
+            taxi.setEnCarrera5(false);
+            taxi.setIndex(0);
+            JOptionPane.showMessageDialog(interfaz, "Error, no existe ruta posible o el taxí está atascado", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
+
     public void setDestination4(Taxi taxi) {
         try {
             int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
             int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
-            if (graficador.getCiudad().getMatrizActual()[y2][x2]==-1) {
+            if (graficador.getCiudad().getMatrizActual()[y2][x2] == -1) {
                 JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
                 return;
             }
             Ciudad ciudad = graficador.getCiudad();
-            taxi.setRuta(ciudad.getRutaMasCortaEdificio(new Point(x2, y2), getEdificioMasCercano(taxi.x, taxi.y), taxi));
+            List<Point> rutaCorta = ciudad.getRutaMasCortaEdificio(new Point(x2, y2), getEdificioMasCercano(taxi.x, taxi.y), taxi);
+            if (!rutaCorta.isEmpty()) {
+                taxi.setRuta(rutaCorta);
+            }
+            taxi.calcularElementosAtravesados(ciudad.getPuntosPorElemento());
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
             this.setDestination4(taxi);
+        } catch (NullPointerException ex) {
+            taxi.setEnCarrera4(false);
+            taxi.setIndex(0);
+            taxi.setElementosAtravesados(null);
+            JOptionPane.showMessageDialog(interfaz, "Error, no existe ruta posible o el taxí está atascado", "Error", JOptionPane.ERROR_MESSAGE);
         }
     }
 
     public void notificarFinCarrera(Taxi taxi) {
+        if (taxi.isEnCarrera4()) {
+            taxi.getElementosAtravesados(graficador.getCiudad().getPuntosPorElemento());
+        }
         taxi.setEnCarrera5(false);
         taxi.setEnCarrera4(false);
+        taxi.setElementosAtravesados(null);
         taxi.setIndex(0);
         JOptionPane.showMessageDialog(interfaz, "Se finalizo la carrera\nValor de la carrera: $" + taxi.getValorRuta());
     }

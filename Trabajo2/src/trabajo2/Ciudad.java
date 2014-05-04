@@ -8,14 +8,16 @@ import java.awt.Rectangle;
 import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
 import java.io.File;
+import java.util.AbstractMap;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 import javax.imageio.ImageIO;
-import javax.swing.JOptionPane;
 
 public class Ciudad {
 
@@ -24,6 +26,7 @@ public class Ciudad {
     private String nombre;
     private Escenario escenarioActual;
     private int[][] matrizActual;
+    private List<Entry<Elemento, HashSet<Point>>> puntosPorElemento;
     public static HashMap<String, TexturePaint> texturas;
     public static final int GROSOR_LINEA = Elemento.TAMANOPIXEL / 6;
 
@@ -133,7 +136,6 @@ public class Ciudad {
         Point recorrido[][] = new Point[101][101]; //Donde se va a guardar el recorrido, se guarda como se llego a este nodo
         recorrido[inicio.y][inicio.x] = inicio;
         int tamanoRecorrido[][] = new int[101][101];
-        
         while (!q.isEmpty()) {
             Point nodo = q.poll();
             if (nodo.equals(fin)) {
@@ -151,7 +153,7 @@ public class Ciudad {
             }
         }
         if (recorrido[fin.y][fin.x] == null) {
-            return new ArrayList<>();
+            return null;
         } else {
             return construirRuta(recorrido, inicio, fin);
         }
@@ -206,7 +208,7 @@ public class Ciudad {
         Point recorrido[][] = new Point[101][101]; //Donde se va a guardar el recorrido, se guarda como se llego a este nodo
         recorrido[inicio.y][inicio.x] = inicio;
         int tamanoRecorrido[][] = new int[101][101];
-        
+
         while (!q.isEmpty()) {
             Point nodo = q.poll();
             if (nodo.equals(medio)) {
@@ -223,11 +225,11 @@ public class Ciudad {
                 }
             }
         }
-        List<Point> rutaUsuAEdif=null; //el primer punto es el edificio
+        List<Point> rutaUsuAEdif = null; //el primer punto es el edificio
         if (recorrido[medio.y][medio.x] != null) {
-            rutaUsuAEdif=construirRuta(recorrido, inicio, medio);
+            rutaUsuAEdif = construirRuta(recorrido, inicio, medio);
         } else {
-            rutaUsuAEdif=new ArrayList<>();
+            rutaUsuAEdif = new ArrayList<>();
         }
         //segunda parte de la ruta
         q = new LinkedList<>();
@@ -235,7 +237,7 @@ public class Ciudad {
         recorrido = new Point[101][101]; //Donde se va a guardar el recorrido, se guarda como se llego a este nodo
         recorrido[medio.y][medio.x] = medio;
         tamanoRecorrido = new int[101][101];
-        
+
         while (!q.isEmpty()) {
             Point nodo = q.poll();
             if (nodo.equals(fin)) {
@@ -252,13 +254,13 @@ public class Ciudad {
                 }
             }
         }
-        List<Point> rutaEdifATaxi=null; //el primer punto es el taxi
+        List<Point> rutaEdifATaxi = null; //el primer punto es el taxi
         if (recorrido[fin.y][fin.x] != null) {
-            rutaEdifATaxi=construirRuta(recorrido, medio, fin);
+            rutaEdifATaxi = construirRuta(recorrido, medio, fin);
         } else {
-            rutaEdifATaxi=new ArrayList<>();
+            rutaEdifATaxi = new ArrayList<>();
         }
-        
+
         for (int i = 1; i < rutaUsuAEdif.size(); i++) {
             rutaEdifATaxi.add(rutaUsuAEdif.get(i));
         }
@@ -270,6 +272,7 @@ public class Ciudad {
     }
 
     private void generarMatriz() {
+        puntosPorElemento = new ArrayList<>();
         for (int i = 0; i < 101; i++) {
             for (int j = 0; j < 101; j++) {
                 matrizActual[i][j] = 0;
@@ -277,19 +280,26 @@ public class Ciudad {
         }
         for (Elemento edificio : escenarioActual.getEdificios()) {
             Rectangle r = edificio.getRectangulo();
+            HashSet<Point> set = new HashSet<>();
             for (int i = r.x + 1; i < r.x + r.width; i++) {
                 for (int j = r.y + 1; j < r.y + r.height; j++) {
                     matrizActual[j][i] = 1;
+                    set.add(new Point(i, j));
                 }
             }
+            puntosPorElemento.add(new AbstractMap.SimpleEntry<>(edificio,set));
+            
         }
         for (Elemento hueco : escenarioActual.getHuecos()) {
             Rectangle r = hueco.getRectangulo();
+            HashSet<Point> set = new HashSet<>();
             for (int i = r.x + 1; i < r.x + r.width; i++) {
                 for (int j = r.y + 1; j < r.y + r.height; j++) {
                     matrizActual[j][i] = -1;
+                    set.add(new Point(i, j));
                 }
             }
+            puntosPorElemento.add(new AbstractMap.SimpleEntry<>(hueco,set));
         }
         for (int i = 0; i < 101; i++) {
             for (int j = 0; j < 101; j++) {
@@ -299,14 +309,22 @@ public class Ciudad {
             }
         }
     }
-    
-    public boolean edificioContienePuntos(Point usuario, Point otro){
-        List<Elemento> edificios=escenarioActual.getEdificios();
-        for (int i = 0; i < edificios.size(); i++) {
-            if (edificios.get(i).getRectangulo().contains(usuario) && edificios.get(i).getRectangulo().contains(otro)) {
-                return true;
-            };
+
+    public boolean edificioContienePuntos(Point usuario, Point otro) {
+        List<Elemento> edificios = escenarioActual.getEdificios();
+        for (Elemento edificio : edificios) {
+            Rectangle rectangulo = edificio.getRectangulo();
+            if (edificio.getRectangulo().contains(usuario) && edificio.getRectangulo().contains(otro)) {
+                return usuario.x != rectangulo.x && usuario.x != rectangulo.x + rectangulo.width && usuario.y != rectangulo.y && usuario.y != rectangulo.y + rectangulo.height;
+            }
         }
         return false;
+    }
+
+    /**
+     * @return the puntosPorElemento
+     */
+    public List<Map.Entry<Elemento, HashSet<Point>>> getPuntosPorElemento() {
+        return puntosPorElemento;
     }
 }

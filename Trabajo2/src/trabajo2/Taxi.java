@@ -6,7 +6,10 @@ import java.awt.Graphics2D;
 import java.awt.Point;
 import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import javax.swing.JOptionPane;
 import static trabajo2.Elemento.TAMANOPIXEL;
 
 public class Taxi extends Point {
@@ -16,6 +19,7 @@ public class Taxi extends Point {
     private boolean enCarrera4 = false;
     private boolean enCarrera5 = false;
     private int valorCarrera = 0;
+    private boolean[] elementosAtravesados;
 
     public static List<Taxi> generarTaxisByCiudad(Ciudad c, int cantidad) {
         ArrayList<Taxi> taxis = new ArrayList<>();
@@ -42,6 +46,7 @@ public class Taxi extends Point {
         }
         return taxisEnCarrera;
     }
+
     public static List<Taxi> getTaxisEnCarrera4(List<Taxi> taxis) {
         List<Taxi> taxisEnCarrera = new ArrayList<>();
         for (Taxi taxi : taxis) {
@@ -97,9 +102,11 @@ public class Taxi extends Point {
     public boolean isEnCarrera() {
         return enCarrera5 || enCarrera4;
     }
+
     public boolean isEnCarrera4() {
         return enCarrera4;
     }
+
     public boolean isEnCarrera5() {
         return enCarrera5;
     }
@@ -110,11 +117,11 @@ public class Taxi extends Point {
     public void setEnCarrera5(boolean enCarrera) {
         this.enCarrera5 = enCarrera;
     }
-    
+
     public void setEnCarrera4(boolean enCarrera) {
         this.enCarrera4 = enCarrera;
     }
-    
+
     public Point siguientePosicion() {
         if (ruta.size() >= 2) {
             return ruta.get(1);
@@ -146,5 +153,41 @@ public class Taxi extends Point {
 
     public int getValorRuta() {
         return (valorCarrera * 100 + 2400);
+    }
+
+    public void getElementosAtravesados(List<Map.Entry<Elemento, HashSet<Point>>> elementos) {
+        int huecos = 0, edificios = 0;
+        for (int i = 0; i < elementosAtravesados.length; i++) {
+            if (elementosAtravesados[i]) {
+                Map.Entry entry = elementos.get(i);
+                Elemento elemento = (Elemento) entry.getKey();
+                if (elemento.getTipo().equals("hueco")) {
+                    huecos++;
+                } else {
+                    edificios++;
+                }
+            }
+        }
+        JOptionPane.showMessageDialog(null, "Se atravesaron " + edificios + " edificios y " + huecos + " huecos en la ruta");
+    }
+
+    /**
+     * @param elementosAtravesados the elementosAtravesados to set
+     */
+    public void setElementosAtravesados(boolean[] elementosAtravesados) {
+        this.elementosAtravesados = elementosAtravesados;
+    }
+
+    public void calcularElementosAtravesados(List<Map.Entry<Elemento, HashSet<Point>>> elementos) {
+        for (Point puntoRuta : ruta) {
+            int i = 0;
+            for (Map.Entry<Elemento, HashSet<Point>> pareja : elementos) {
+                HashSet<Point> setPuntos = pareja.getValue();
+                if (!elementosAtravesados[i] && setPuntos.contains(puntoRuta)) {
+                    elementosAtravesados[i] = true;
+                }
+                i++;
+            }
+        }
     }
 }

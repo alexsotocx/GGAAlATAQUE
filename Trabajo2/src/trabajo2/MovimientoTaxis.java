@@ -107,21 +107,17 @@ public class MovimientoTaxis extends Thread {
                         continue;
                     }
                     nroOpciones = new ArrayList();
-                    if (taxi.x==0) {
+                    if (taxi.x == 0) {
                         nroOpciones.add(3);
-                    }
-                    else if (taxi.x==100) {
+                    } else if (taxi.x == 100) {
                         nroOpciones.add(1);
-                    }
-                    else if (taxi.y==0) {
+                    } else if (taxi.y == 0) {
                         nroOpciones.add(2);
-                    }
-                    else if (taxi.y==100) {
+                    } else if (taxi.y == 100) {
                         nroOpciones.add(4);
-                    }
-                    else {
+                    } else {
                         for (int i = 0; i < 4; i++) {
-                           if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1) {
+                            if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1) {
                                 nroOpciones.add(i + 1);
                             }
                         }

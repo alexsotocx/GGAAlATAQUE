@@ -325,7 +325,6 @@ public class VistaPrincipal extends javax.swing.JFrame {
     private javax.swing.JPanel panelGraficador;
     // End of variables declaration//GEN-END:variables
 
-
     public JButton getBotonAtravesarEdificio() {
         return botonAtravesarEdificio;
     }
