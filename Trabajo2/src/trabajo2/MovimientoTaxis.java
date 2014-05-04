@@ -25,7 +25,6 @@ public class MovimientoTaxis extends Thread {
     private ControladorAplicacion controladorAplicacion;
     public static boolean moverTaxis = false;
     public static boolean esperaInicio = false;
-
     private volatile Thread hilo;
 
     public MovimientoTaxis(List<Taxi> taxis, Ciudad ciudad, Graficador graficador) {
@@ -97,24 +96,24 @@ public class MovimientoTaxis extends Thread {
                     }
                     nroOpciones = new ArrayList();
                     if (taxi.x == 0) {
-                        if (!ciudad.atraviesaElemento(taxi, new Point(taxi.x + 1, taxi.y))) {
+                        if (ciudad.atraviesaElemento(taxi, new Point(taxi.x + 1, taxi.y)) == null) {
                             nroOpciones.add(3);
                         }
                     } else if (taxi.x == 100) {
-                        if (!ciudad.atraviesaElemento(taxi, new Point(taxi.x - 1, taxi.y))) {
+                        if (ciudad.atraviesaElemento(taxi, new Point(taxi.x - 1, taxi.y))== null) {
                             nroOpciones.add(1);
                         }
                     } else if (taxi.y == 0) {
-                        if (!ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y + 1))) {
+                        if (ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y + 1))== null) {
                             nroOpciones.add(2);
                         }
                     } else if (taxi.y == 100) {
-                        if (!ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y - 1))) {
+                        if (ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y - 1))== null) {
                             nroOpciones.add(4);
                         }
                     } else {
                         for (int i = 0; i < 4; i++) {
-                            if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1 && matriz[taxi.y + dy[i]][taxi.x + dx[i]] != -9 && !ciudad.atraviesaElemento(taxi, new Point(taxi.x + dx[i], taxi.y + dy[i]))) {
+                            if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1 && matriz[taxi.y + dy[i]][taxi.x + dx[i]] != -9 && ciudad.atraviesaElemento(taxi, new Point(taxi.x + dx[i], taxi.y + dy[i])) == null) {
                                 nroOpciones.add(i + 1);
                             }
                         }

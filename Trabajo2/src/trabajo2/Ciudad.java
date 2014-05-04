@@ -160,20 +160,6 @@ public class Ciudad {
         }
     }
 
-    private List<Point> construirRuta(Point[][] recorrido, Point inicio, Point fin) {
-        List<Point> ruta = new ArrayList<>();
-        Point puntoActual = new Point(fin);
-        Point puntoAnterior = recorrido[fin.y][fin.x];
-        while (!puntoAnterior.equals(inicio)) {
-            ruta.add(puntoActual);
-            puntoActual = puntoAnterior;
-            puntoAnterior = recorrido[puntoAnterior.y][puntoAnterior.x];
-        }
-        ruta.add(puntoActual);
-        ruta.add(inicio);
-        return ruta;
-    }
-
     public static List<Rectangle> crearRutaGrafica(List<Point> ruta) {
         List<Rectangle> rutaVisible = new ArrayList<>();
         for (int i = 0; i < ruta.size() - 1; i++) {
@@ -188,10 +174,6 @@ public class Ciudad {
         return rutaVisible;
     }
 
-    private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux, Point nodoUsuario, Point nodoTaxi, Point nodoActual) {
-        return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && !this.atraviesaElemento(nodoActual, nodoAux) && (Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1 || edificioContienePuntos(nodoUsuario, nodoAux) || edificioContienePuntos(nodoTaxi, nodoAux));
-    }
-
     /**
      * Devulve la ruta más corta de un lugar a otro en la ciudad que llama este
      * metodo (atraviesa mínimo un edificio)
@@ -202,9 +184,9 @@ public class Ciudad {
      * @return lista de rectangulos a dibujar para mostrar la ruta más corta
      */
     public List<Point> getRutaMasCortaEdificio(Point inicio, Point medio, Point fin) {
-        if (medio==null) {
+        if (medio == null) {
             JOptionPane.showMessageDialog(null, "No hay edificios que se puedan atravesar");
-            medio=inicio;
+            medio = inicio;
         }
         //Donde se van a guardar los próximos nodos(puntos) a recorrer
         //primera parte de la ruta
@@ -272,11 +254,6 @@ public class Ciudad {
         return rutaEdifATaxi;
     }
 
-    private boolean puedoMovermeEdificio(int[][] tamanoRecorrido, Point nodoAux) {
-        //se puede mover por el borde??
-        return nodoAux.x >= 0 && nodoAux.x <= 100 && nodoAux.y >= 0 && nodoAux.y <= 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
-    }
-
     private void generarMatriz() {
         puntosPorElemento = new ArrayList<>();
         for (int i = 0; i < 101; i++) {
@@ -284,6 +261,7 @@ public class Ciudad {
                 matrizActual[i][j] = 0;
             }
         }
+        int index = 0;
         for (Elemento edificio : escenarioActual.getEdificios()) {
             Rectangle r = edificio.getRectangulo();
             HashSet<Point> set = new HashSet<>();
@@ -293,8 +271,8 @@ public class Ciudad {
                     set.add(new Point(i, j));
                 }
             }
-            puntosPorElemento.add(new AbstractMap.SimpleEntry<>(edificio,set));
-            
+            puntosPorElemento.add(new AbstractMap.SimpleEntry<>(edificio, set));
+            edificio.setId(index++);
         }
         for (Elemento hueco : escenarioActual.getHuecos()) {
             Rectangle r = hueco.getRectangulo();
@@ -305,7 +283,8 @@ public class Ciudad {
                     set.add(new Point(i, j));
                 }
             }
-            puntosPorElemento.add(new AbstractMap.SimpleEntry<>(hueco,set));
+            puntosPorElemento.add(new AbstractMap.SimpleEntry<>(hueco, set));
+            hueco.setId(index++);
         }
         for (int i = 0; i < 101; i++) {
             for (int j = 0; j < 101; j++) {
@@ -326,35 +305,60 @@ public class Ciudad {
         }
         return false;
     }
-    
-    public boolean atraviesaElemento(Point ini, Point fin) {
+
+    public Elemento atraviesaElemento(Point inicio, Point fin) {
         List<Elemento> edificios = escenarioActual.getEdificios();
         for (Elemento edificio : edificios) {
-            Rectangle rectangulo = edificio.getRectangulo();
-            if (rectangulo.contains(ini) || rectangulo.contains(fin)) {
-                return (ini.x==rectangulo.x && fin.x==rectangulo.x+rectangulo.width && (ini.y != rectangulo.y && ini.y != rectangulo.y+rectangulo.height)) || 
-                       (fin.x==rectangulo.x && ini.x==rectangulo.x+rectangulo.width && (ini.y != rectangulo.y && ini.y != rectangulo.y+rectangulo.height)) || 
-                       (ini.y==rectangulo.y && fin.y==rectangulo.y+rectangulo.height && (ini.x != rectangulo.x && ini.x != rectangulo.x+rectangulo.width)) || 
-                       (fin.y==rectangulo.y && ini.y==rectangulo.y+rectangulo.height && (ini.x != rectangulo.x && ini.x != rectangulo.x+rectangulo.width));
+            if (atraviesaElementoEspecifico(inicio, fin, edificio)) {
+                return edificio;
             }
         }
         List<Elemento> huecos = escenarioActual.getHuecos();
         for (Elemento hueco : huecos) {
-            Rectangle rectangulo = hueco.getRectangulo();
-            if (rectangulo.contains(ini) || rectangulo.contains(fin)) {
-                return (ini.x==rectangulo.x && fin.x==rectangulo.x+rectangulo.width && (ini.y != rectangulo.y && ini.y != rectangulo.y+rectangulo.height)) || 
-                       (fin.x==rectangulo.x && ini.x==rectangulo.x+rectangulo.width && (ini.y != rectangulo.y && ini.y != rectangulo.y+rectangulo.height)) || 
-                       (ini.y==rectangulo.y && fin.y==rectangulo.y+rectangulo.height && (ini.x != rectangulo.x && ini.x != rectangulo.x+rectangulo.width)) || 
-                       (fin.y==rectangulo.y && ini.y==rectangulo.y+rectangulo.height && (ini.x != rectangulo.x && ini.x != rectangulo.x+rectangulo.width));
+            if (atraviesaElementoEspecifico(inicio, fin, hueco)) {
+                return hueco;
+            }
+        }
+        return null;
+    }
+
+    public List<Map.Entry<Elemento, HashSet<Point>>> getPuntosPorElemento() {
+        return puntosPorElemento;
+    }
+
+    private boolean atraviesaElementoEspecifico(Point inicio, Point fin, Elemento elemento) {
+        Rectangle rectangulo = elemento.getRectangulo();
+        if (rectangulo.contains(inicio) || rectangulo.contains(fin)) {
+            if ((inicio.x == rectangulo.x && fin.x == rectangulo.x + rectangulo.width && (inicio.y != rectangulo.y && inicio.y != rectangulo.y + rectangulo.height))
+                    || (fin.x == rectangulo.x && inicio.x == rectangulo.x + rectangulo.width && (inicio.y != rectangulo.y && inicio.y != rectangulo.y + rectangulo.height))
+                    || (inicio.y == rectangulo.y && fin.y == rectangulo.y + rectangulo.height && (inicio.x != rectangulo.x && inicio.x != rectangulo.x + rectangulo.width))
+                    || (fin.y == rectangulo.y && inicio.y == rectangulo.y + rectangulo.height && (inicio.x != rectangulo.x && inicio.x != rectangulo.x + rectangulo.width))) {
+                return true;
             }
         }
         return false;
     }
 
-    /**
-     * @return the puntosPorElemento
-     */
-    public List<Map.Entry<Elemento, HashSet<Point>>> getPuntosPorElemento() {
-        return puntosPorElemento;
+    private List<Point> construirRuta(Point[][] recorrido, Point inicio, Point fin) {
+        List<Point> ruta = new ArrayList<>();
+        Point puntoActual = new Point(fin);
+        Point puntoAnterior = recorrido[fin.y][fin.x];
+        while (!puntoAnterior.equals(inicio)) {
+            ruta.add(puntoActual);
+            puntoActual = puntoAnterior;
+            puntoAnterior = recorrido[puntoAnterior.y][puntoAnterior.x];
+        }
+        ruta.add(puntoActual);
+        ruta.add(inicio);
+        return ruta;
     }
+
+    private boolean puedoMovermeEdificio(int[][] tamanoRecorrido, Point nodoAux) {
+        return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
+    }
+
+    private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux, Point nodoUsuario, Point nodoTaxi, Point nodoActual) {
+        return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && (Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1 || edificioContienePuntos(nodoUsuario, nodoAux) || edificioContienePuntos(nodoTaxi, nodoAux)) && atraviesaElemento(nodoActual, nodoAux) == null;
+    }
+
 }

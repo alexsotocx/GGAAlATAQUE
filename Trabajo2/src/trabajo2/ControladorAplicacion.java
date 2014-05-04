@@ -217,7 +217,7 @@ public class ControladorAplicacion {
                         taxiMasCercano.setEnCarrera4(true);
                         taxiMasCercano.setRuta(rutaCorta);
                         taxiMasCercano.setElementosAtravesados(new boolean[ciudad.getPuntosPorElemento().size()]);
-                        taxiMasCercano.calcularElementosAtravesados(ciudad.getPuntosPorElemento());
+                        taxiMasCercano.calcularElementosAtravesados(ciudad);
                         graficador.dibujarRutaMasCercana();
                         interfaz.getBotonPararTaxis().setText("Parar");
                         MovimientoTaxis.moverTaxis = true;
@@ -346,7 +346,7 @@ public class ControladorAplicacion {
             if (!rutaCorta.isEmpty()) {
                 taxi.setRuta(rutaCorta);
             }
-            taxi.calcularElementosAtravesados(ciudad.getPuntosPorElemento());
+            taxi.calcularElementosAtravesados(ciudad);
         } catch (HeadlessException | NumberFormatException e) {
             JOptionPane.showMessageDialog(interfaz, "Error, texto ingresado no es un numero", "Error", JOptionPane.ERROR_MESSAGE);
             this.setDestination4(taxi);

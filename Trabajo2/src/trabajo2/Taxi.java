@@ -178,7 +178,14 @@ public class Taxi extends Point {
         this.elementosAtravesados = elementosAtravesados;
     }
 
-    public void calcularElementosAtravesados(List<Map.Entry<Elemento, HashSet<Point>>> elementos) {
+    public void calcularElementosAtravesados(Ciudad ciudad) {
+        List<Map.Entry<Elemento, HashSet<Point>>> elementos = ciudad.getPuntosPorElemento();
+        for (int i = 0; i < ruta.size() - 1; i++) {
+            Elemento elemento = ciudad.atraviesaElemento(ruta.get(i), ruta.get(i + 1));
+            if (elemento != null) {
+                elementosAtravesados[elemento.getId()] = true;
+            }
+        }
         for (Point puntoRuta : ruta) {
             int i = 0;
             for (Map.Entry<Elemento, HashSet<Point>> pareja : elementos) {
@@ -189,6 +196,5 @@ public class Taxi extends Point {
                 i++;
             }
         }
-        
     }
 }

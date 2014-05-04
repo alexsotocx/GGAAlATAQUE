@@ -19,7 +19,7 @@ public class Elemento {
     private String nombre;
     private String tipo;
     private static HashMap<String, BufferedImage> imagenes;
-
+    
     public Elemento(int x1, int y1, int x2, int y2, String nombre, String tipo, int id) {
         int xini = Math.min(x1, x2);
         int yini = Math.min(y1, y2);
