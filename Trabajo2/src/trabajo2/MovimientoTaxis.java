@@ -67,9 +67,6 @@ public class MovimientoTaxis extends Thread {
                 int opcionElegida;
                 ArrayList<Integer> nroOpciones;//aloja las opciones posibles... op1:Arriba op2:derecha op3:abajo op4:izquierda
                 for (Taxi taxi : taxis) {
-                    if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
-                        matriz[taxi.y][taxi.x] = 0;
-                    }
                     if (taxi.isEnCarrera5()) {
                         Point siguiente = taxi.siguientePosicion();
                         taxi.removerPosicion();
@@ -78,12 +75,8 @@ public class MovimientoTaxis extends Thread {
                             controladorAplicacion.setDestination(taxi);
                             continue;
                         } else if (siguiente == null) {
-
                             controladorAplicacion.notificarFinCarrera(taxi);
                             continue;
-                        }
-                        if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
-                            matriz[taxi.y][taxi.x] = 2;
                         }
                         taxi.setLocation(siguiente);
                         continue;
@@ -96,28 +89,32 @@ public class MovimientoTaxis extends Thread {
                             controladorAplicacion.setDestination4(taxi);
                             continue;
                         } else if (siguiente == null) {
-
                             controladorAplicacion.notificarFinCarrera(taxi);
                             continue;
-                        }
-                        if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
-                            matriz[taxi.y][taxi.x] = 2;
                         }
                         taxi.setLocation(siguiente);
                         continue;
                     }
                     nroOpciones = new ArrayList();
                     if (taxi.x == 0) {
-                        nroOpciones.add(3);
+                        if (!ciudad.atraviesaElemento(taxi, new Point(taxi.x + 1, taxi.y))) {
+                            nroOpciones.add(3);
+                        }
                     } else if (taxi.x == 100) {
-                        nroOpciones.add(1);
+                        if (!ciudad.atraviesaElemento(taxi, new Point(taxi.x - 1, taxi.y))) {
+                            nroOpciones.add(1);
+                        }
                     } else if (taxi.y == 0) {
-                        nroOpciones.add(2);
+                        if (!ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y + 1))) {
+                            nroOpciones.add(2);
+                        }
                     } else if (taxi.y == 100) {
-                        nroOpciones.add(4);
+                        if (!ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y - 1))) {
+                            nroOpciones.add(4);
+                        }
                     } else {
                         for (int i = 0; i < 4; i++) {
-                            if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1) {
+                            if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1 && matriz[taxi.y + dy[i]][taxi.x + dx[i]] != -9 && !ciudad.atraviesaElemento(taxi, new Point(taxi.x + dx[i], taxi.y + dy[i]))) {
                                 nroOpciones.add(i + 1);
                             }
                         }
@@ -126,16 +123,17 @@ public class MovimientoTaxis extends Thread {
                     if (opcionElegida != 5) {
                         taxi.y += dy[opcionElegida - 1];
                         taxi.x += dx[opcionElegida - 1];
-                        if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
-                            matriz[taxi.y][taxi.x] = 2;
-                        }
                     } else {
                         //el taxi no se puede mover
                         JOptionPane.showMessageDialog(null, "El taxi no se puede mover. Ingrese una posición válida");
-                        taxi.x = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
-                        taxi.y = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
-                        if (Math.abs(matriz[taxi.y][taxi.x]) != 1) {
-                            matriz[taxi.y][taxi.x] = 2;
+                        while (true) {
+                            taxi.x = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la nueva posición x del taxi"));
+                            taxi.y = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la nueva posición y del taxi"));
+                            if (taxi.x < 0 || taxi.x > 100 || taxi.y < 0 || taxi.y > 100) {
+                                JOptionPane.showMessageDialog(null, "El taxi no puede estar fuera del escenario");
+                                continue;
+                            }
+                            break;
                         }
                     }
                 }

@@ -18,6 +18,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
 import javax.imageio.ImageIO;
+import javax.swing.JOptionPane;
 
 public class Ciudad {
 
@@ -145,7 +146,7 @@ public class Ciudad {
             for (int i = 0; i < 4; i++) {
                 Point nodoVecino = new Point(nodo);
                 nodoVecino.move(nodo.x + MovimientoTaxis.dx[i], nodo.y + MovimientoTaxis.dy[i]);
-                if (puedoMoverme(tamanoRecorrido, nodoVecino, inicio)) {
+                if (puedoMoverme(tamanoRecorrido, nodoVecino, inicio, fin, nodo)) {
                     q.offer(nodoVecino);
                     tamanoRecorrido[nodoVecino.y][nodoVecino.x] = 1 + tamanoRecorrido[nodo.y][nodo.x];
                     recorrido[nodoVecino.y][nodoVecino.x] = nodo;
@@ -187,8 +188,8 @@ public class Ciudad {
         return rutaVisible;
     }
 
-    private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux, Point nodoUsuario) {
-        return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && (Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1 || edificioContienePuntos(nodoUsuario, nodoAux));
+    private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux, Point nodoUsuario, Point nodoTaxi, Point nodoActual) {
+        return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && !this.atraviesaElemento(nodoActual, nodoAux) && (Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1 || edificioContienePuntos(nodoUsuario, nodoAux) || edificioContienePuntos(nodoTaxi, nodoAux));
     }
 
     /**
@@ -201,6 +202,10 @@ public class Ciudad {
      * @return lista de rectangulos a dibujar para mostrar la ruta más corta
      */
     public List<Point> getRutaMasCortaEdificio(Point inicio, Point medio, Point fin) {
+        if (medio==null) {
+            JOptionPane.showMessageDialog(null, "No hay edificios que se puedan atravesar");
+            medio=inicio;
+        }
         //Donde se van a guardar los próximos nodos(puntos) a recorrer
         //primera parte de la ruta
         Queue<Point> q = new LinkedList<>();
@@ -268,6 +273,7 @@ public class Ciudad {
     }
 
     private boolean puedoMovermeEdificio(int[][] tamanoRecorrido, Point nodoAux) {
+        //se puede mover por el borde??
         return nodoAux.x >= 0 && nodoAux.x <= 100 && nodoAux.y >= 0 && nodoAux.y <= 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
     }
 
@@ -304,7 +310,7 @@ public class Ciudad {
         for (int i = 0; i < 101; i++) {
             for (int j = 0; j < 101; j++) {
                 if (i == 0 || i == 100 || j == 0 || j == 100) {
-                    matrizActual[j][i] = -1;
+                    matrizActual[j][i] = -9;
                 }
             }
         }
@@ -314,8 +320,32 @@ public class Ciudad {
         List<Elemento> edificios = escenarioActual.getEdificios();
         for (Elemento edificio : edificios) {
             Rectangle rectangulo = edificio.getRectangulo();
-            if (edificio.getRectangulo().contains(usuario) && edificio.getRectangulo().contains(otro)) {
+            if (rectangulo.contains(usuario) && rectangulo.contains(otro)) {
                 return usuario.x != rectangulo.x && usuario.x != rectangulo.x + rectangulo.width && usuario.y != rectangulo.y && usuario.y != rectangulo.y + rectangulo.height;
+            }
+        }
+        return false;
+    }
+    
+    public boolean atraviesaElemento(Point ini, Point fin) {
+        List<Elemento> edificios = escenarioActual.getEdificios();
+        for (Elemento edificio : edificios) {
+            Rectangle rectangulo = edificio.getRectangulo();
+            if (rectangulo.contains(ini) || rectangulo.contains(fin)) {
+                return (ini.x==rectangulo.x && fin.x==rectangulo.x+rectangulo.width && (ini.y != rectangulo.y && ini.y != rectangulo.y+rectangulo.height)) || 
+                       (fin.x==rectangulo.x && ini.x==rectangulo.x+rectangulo.width && (ini.y != rectangulo.y && ini.y != rectangulo.y+rectangulo.height)) || 
+                       (ini.y==rectangulo.y && fin.y==rectangulo.y+rectangulo.height && (ini.x != rectangulo.x && ini.x != rectangulo.x+rectangulo.width)) || 
+                       (fin.y==rectangulo.y && ini.y==rectangulo.y+rectangulo.height && (ini.x != rectangulo.x && ini.x != rectangulo.x+rectangulo.width));
+            }
+        }
+        List<Elemento> huecos = escenarioActual.getHuecos();
+        for (Elemento hueco : huecos) {
+            Rectangle rectangulo = hueco.getRectangulo();
+            if (rectangulo.contains(ini) || rectangulo.contains(fin)) {
+                return (ini.x==rectangulo.x && fin.x==rectangulo.x+rectangulo.width && (ini.y != rectangulo.y && ini.y != rectangulo.y+rectangulo.height)) || 
+                       (fin.x==rectangulo.x && ini.x==rectangulo.x+rectangulo.width && (ini.y != rectangulo.y && ini.y != rectangulo.y+rectangulo.height)) || 
+                       (ini.y==rectangulo.y && fin.y==rectangulo.y+rectangulo.height && (ini.x != rectangulo.x && ini.x != rectangulo.x+rectangulo.width)) || 
+                       (fin.y==rectangulo.y && ini.y==rectangulo.y+rectangulo.height && (ini.x != rectangulo.x && ini.x != rectangulo.x+rectangulo.width));
             }
         }
         return false;

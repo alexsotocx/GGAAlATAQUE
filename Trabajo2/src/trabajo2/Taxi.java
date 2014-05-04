@@ -189,5 +189,6 @@ public class Taxi extends Point {
                 i++;
             }
         }
+        
     }
 }

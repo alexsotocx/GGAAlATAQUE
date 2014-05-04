@@ -153,6 +153,10 @@ public class ControladorAplicacion {
                 try {
                     int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
                     int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
+                    if (x1 < 0 || x1 > 100 || y1 < 0 || y1 > 100) {
+                        JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar fuera del escenario");
+                        return;
+                    }
                     if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
                         JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
                         return;
@@ -193,6 +197,10 @@ public class ControladorAplicacion {
                 try {
                     int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
                     int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
+                    if (x1 < 0 || x1 > 100 || y1 < 0 || y1 > 100) {
+                        JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar fuera del escenario");
+                        return;
+                    }
                     /*if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
                      JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
                      return;
@@ -202,7 +210,7 @@ public class ControladorAplicacion {
                         return;
                     }
                     Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
-                    Point edificioMasCercano = getEdificioMasCercano(taxiMasCercano.x, taxiMasCercano.y);
+                    Point edificioMasCercano = getElementoMasCercano(taxiMasCercano.x, taxiMasCercano.y);
                     Ciudad ciudad = graficador.getCiudad();
                     List<Point> rutaCorta = ciudad.getRutaMasCortaEdificio(new Point(x1, y1), edificioMasCercano, taxiMasCercano);
                     if (rutaCorta != null) {
@@ -262,7 +270,7 @@ public class ControladorAplicacion {
             if (taxi.isEnCarrera()) {
                 continue;
             }
-            distActual = Math.sqrt(Math.abs(x1 - taxi.x) * Math.abs(x1 - taxi.x) + Math.abs(y1 - taxi.y) * Math.abs(y1 - taxi.y));
+            distActual = Math.sqrt((x1 - taxi.x) * (x1 - taxi.x) + (y1 - taxi.y) * (y1 - taxi.y));
             if (distActual < distMinima) {
                 distMinima = distActual;
                 taxiCercano = taxi;
@@ -271,21 +279,21 @@ public class ControladorAplicacion {
         return taxiCercano;
     }
 
-    public Point getEdificioMasCercano(int x1, int y1) {
+    public Point getElementoMasCercano(int x1, int y1) {
         int[][] matriz = graficador.getCiudad().getMatrizActual();
         List<Point> unos = new ArrayList();
         for (int i = 0; i < 101; i++) {
             for (int j = 0; j < 101; j++) {
-                if (matriz[j][i] == 1) {
+                if (Math.abs(matriz[j][i]) == 1) {
                     unos.add(new Point(i, j));
                 }
             }
         }
-        Point p = new Point();
+        Point p = null;
         double distMinima = 140.007142675f;
         double distActual;
         for (Point uno : unos) {
-            distActual = Math.sqrt(Math.abs(x1 - uno.x) * Math.abs(x1 - uno.x) + Math.abs(y1 - uno.y) * Math.abs(y1 - uno.y));
+            distActual = Math.sqrt((x1 - uno.x) * (x1 - uno.x) + (y1 - uno.y) * (y1 - uno.y));
             if (distActual < distMinima) {
                 distMinima = distActual;
                 p = uno;
@@ -298,8 +306,12 @@ public class ControladorAplicacion {
         try {
             int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
             int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
+            if (x2 < 0 || x2 > 100 || y2 < 0 || y2 > 100) {
+                JOptionPane.showMessageDialog(interfaz, "El destino no puede estar fuera del escenario");
+                return;
+            }
             if (graficador.getCiudad().getMatrizActual()[y2][x2] == -1) {
-                JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
+                JOptionPane.showMessageDialog(interfaz, "El destino no puede estar en un hueco");
                 return;
             }
             Ciudad ciudad = graficador.getCiudad();
@@ -321,12 +333,16 @@ public class ControladorAplicacion {
         try {
             int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
             int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
+            if (x2 < 0 || x2 > 100 || y2 < 0 || y2 > 100) {
+                JOptionPane.showMessageDialog(interfaz, "El destino no puede estar fuera del escenario");
+                return;
+            }
             if (graficador.getCiudad().getMatrizActual()[y2][x2] == -1) {
-                JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
+                JOptionPane.showMessageDialog(interfaz, "El destino no puede estar en un hueco");
                 return;
             }
             Ciudad ciudad = graficador.getCiudad();
-            List<Point> rutaCorta = ciudad.getRutaMasCortaEdificio(new Point(x2, y2), getEdificioMasCercano(taxi.x, taxi.y), taxi);
+            List<Point> rutaCorta = ciudad.getRutaMasCortaEdificio(new Point(x2, y2), getElementoMasCercano(taxi.x, taxi.y), taxi);
             if (!rutaCorta.isEmpty()) {
                 taxi.setRuta(rutaCorta);
             }
