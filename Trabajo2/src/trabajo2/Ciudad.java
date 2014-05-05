@@ -205,7 +205,7 @@ public class Ciudad {
             for (int i = 0; i < 4; i++) {
                 Point nodoVecino = new Point(nodo);
                 nodoVecino.move(nodo.x + MovimientoTaxis.dx[i], nodo.y + MovimientoTaxis.dy[i]);
-                if (puedoMovermeEdificio(tamanoRecorrido, nodoVecino)) {
+                if (puedoMovermeEdificio(tamanoRecorrido, nodoVecino, fin)) {
                     q.offer(nodoVecino);
                     tamanoRecorrido[nodoVecino.y][nodoVecino.x] = 1 + tamanoRecorrido[nodo.y][nodo.x];
                     recorrido[nodoVecino.y][nodoVecino.x] = nodo;
@@ -234,7 +234,7 @@ public class Ciudad {
             for (int i = 0; i < 4; i++) {
                 Point nodoVecino = new Point(nodo);
                 nodoVecino.move(nodo.x + MovimientoTaxis.dx[i], nodo.y + MovimientoTaxis.dy[i]);
-                if (puedoMovermeEdificio(tamanoRecorrido, nodoVecino)) {
+                if (puedoMovermeEdificio(tamanoRecorrido, nodoVecino, fin)) {
                     q.offer(nodoVecino);
                     tamanoRecorrido[nodoVecino.y][nodoVecino.x] = 1 + tamanoRecorrido[nodo.y][nodo.x];
                     recorrido[nodoVecino.y][nodoVecino.x] = nodo;
@@ -353,12 +353,12 @@ public class Ciudad {
         return ruta;
     }
 
-    private boolean puedoMovermeEdificio(int[][] tamanoRecorrido, Point nodoAux) {
-        return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
+    private boolean puedoMovermeEdificio(int[][] tamanoRecorrido, Point nodoAux, Point nodoTaxi) {
+        return ((nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100) || nodoAux.equals(nodoTaxi)) && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
     }
 
     private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux, Point nodoUsuario, Point nodoTaxi, Point nodoActual) {
-        return nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100 && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && (Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1 || edificioContienePuntos(nodoUsuario, nodoAux) || edificioContienePuntos(nodoTaxi, nodoAux)) && atraviesaElemento(nodoActual, nodoAux) == null;
+        return ((nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100) || nodoAux.equals(nodoTaxi) && (nodoUsuario.x > 0 && nodoUsuario.x < 100 && nodoUsuario.y > 0 && nodoUsuario.y < 100)) && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && (Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1 || edificioContienePuntos(nodoUsuario, nodoAux) || edificioContienePuntos(nodoTaxi, nodoAux)) && atraviesaElemento(nodoActual, nodoAux) == null;
     }
 
 }

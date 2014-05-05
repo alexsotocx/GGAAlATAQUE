@@ -311,7 +311,7 @@ public class ControladorAplicacion {
                 return;
             }
             if (graficador.getCiudad().getMatrizActual()[y2][x2] == -1) {
-                JOptionPane.showMessageDialog(interfaz, "El destino no puede estar en un hueco");
+                JOptionPane.showMessageDialog(interfaz, "El destino no puede estar dentro de un hueco");
                 return;
             }
             Ciudad ciudad = graficador.getCiudad();

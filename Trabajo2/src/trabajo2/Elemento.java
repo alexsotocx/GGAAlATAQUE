@@ -76,6 +76,8 @@ public class Elemento {
         Rectangle recDibujar = getRectanguloVisible();
         graficos.setPaint(Ciudad.texturas.get("hueco"));
         graficos.fill(recDibujar);
+        graficos.setColor(Color.black);
+        graficos.draw(recDibujar);
     }
 
     public Rectangle getRectangulo() {

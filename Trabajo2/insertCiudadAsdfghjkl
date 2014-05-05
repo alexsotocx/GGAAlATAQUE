@@ -1,6 +1,5 @@
 INSERT INTO ciudad VALUES(4,'asdfghjkl',nest_escXML(
-XMLTYPE('
-<mapa>
+XMLTYPE('<mapa>
 	<edificio>
 		<x1>0</x1>
 		<y1>0</y1>
@@ -201,14 +200,11 @@ XMLTYPE('
 		<tipo>museo</tipo>
 		<nombre>4-4</nombre>
 	</edificio>
-</mapa>
-
-'), XMLTYPE('
-<mapa>
+</mapa>'), XMLTYPE('<mapa>
 	<hueco>
 		<x1>0</x1>
 		<y1>0</y1>
-		<x2>20</x2>
+		<x2>1</x2>
 		<y2>20</y2>
 	</hueco>
 	<edificio>
@@ -244,16 +240,22 @@ XMLTYPE('
 		<nombre>0-4</nombre>
 	</edificio>
 	<hueco>
-		<x1>20</x1>
+		<x1>1</x1>
 		<y1>0</y1>
-		<x2>40</x2>
+		<x2>2</x2>
 		<y2>20</y2>
 	</hueco>
 	<hueco>
-		<x1>20</x1>
-		<y1>20</y1>
-		<x2>40</x2>
-		<y2>40</y2>
+		<x1>2</x1>
+		<y1>0</y1>
+		<x2>3</x2>
+		<y2>20</y2>
+	</hueco>
+	<hueco>
+		<x1>4</x1>
+		<y1>1</y1>
+		<x2>5</x2>
+		<y2>20</y2>
 	</hueco>
 	<edificio>
 		<x1>20</x1>
@@ -391,5 +393,4 @@ XMLTYPE('
 		<x2>100</x2>
 		<y2>100</y2>
 	</hueco>
-</mapa>
-'));
+</mapa>')));

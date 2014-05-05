@@ -54,7 +54,7 @@ public class MovimientoTaxis extends Thread {
         while (hilo == hiloActual) {
             if (esperaInicio) {
                 try {
-                    hiloActual.sleep(3000);
+                    hiloActual.sleep(300);
                     esperaInicio = false;
                 } catch (InterruptedException ex) {
                     break;
@@ -95,7 +95,9 @@ public class MovimientoTaxis extends Thread {
                         continue;
                     }
                     nroOpciones = new ArrayList();
-                    if (taxi.x == 0) {
+                    if ((taxi.x == 0 || taxi.x == 100) && (taxi.y == 0 || taxi.y == 100)) {
+                        //no agrega opción
+                    } else if (taxi.x == 0) {
                         if (ciudad.atraviesaElemento(taxi, new Point(taxi.x + 1, taxi.y)) == null) {
                             nroOpciones.add(3);
                         }
@@ -142,7 +144,7 @@ public class MovimientoTaxis extends Thread {
                 break;
             }
             try {
-                hiloActual.sleep(1000);
+                hiloActual.sleep(300);
             } catch (InterruptedException ex) {
                 break;
             }
