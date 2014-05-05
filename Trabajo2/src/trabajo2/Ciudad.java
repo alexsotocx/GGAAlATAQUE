@@ -354,7 +354,7 @@ public class Ciudad {
     }
 
     private boolean puedoMovermeEdificio(int[][] tamanoRecorrido, Point nodoAux, Point nodoTaxi) {
-        return ((nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100) || nodoAux.equals(nodoTaxi)) && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
+        return ((nodoAux.x >= 0 && nodoAux.x <= 100 && nodoAux.y >= 0 && nodoAux.y <= 100) || nodoAux.equals(nodoTaxi)) && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0;
     }
 
     private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux, Point nodoUsuario, Point nodoTaxi, Point nodoActual) {

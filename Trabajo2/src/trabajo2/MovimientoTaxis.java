@@ -54,7 +54,7 @@ public class MovimientoTaxis extends Thread {
         while (hilo == hiloActual) {
             if (esperaInicio) {
                 try {
-                    hiloActual.sleep(300);
+                    hiloActual.sleep(3000);
                     esperaInicio = false;
                 } catch (InterruptedException ex) {
                     break;
@@ -144,7 +144,7 @@ public class MovimientoTaxis extends Thread {
                 break;
             }
             try {
-                hiloActual.sleep(300);
+                hiloActual.sleep(3000);
             } catch (InterruptedException ex) {
                 break;
             }
