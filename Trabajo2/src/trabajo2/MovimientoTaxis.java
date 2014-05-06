@@ -51,16 +51,17 @@ public class MovimientoTaxis extends Thread {
     @Override
     public void run() {
         Thread hiloActual = Thread.currentThread();
+        int contador = 1;
         while (hilo == hiloActual) {
             if (esperaInicio) {
                 try {
                     hiloActual.sleep(3000);
                     esperaInicio = false;
+                    contador = 6;
                 } catch (InterruptedException ex) {
                     break;
                 }
             }
-
             while (moverTaxis && !esperaInicio) {
                 int[][] matriz = ciudad.getMatrizActual();
                 int opcionElegida;
@@ -94,47 +95,50 @@ public class MovimientoTaxis extends Thread {
                         taxi.setLocation(siguiente);
                         continue;
                     }
-                    nroOpciones = new ArrayList();
-                    if ((taxi.x == 0 || taxi.x == 100) && (taxi.y == 0 || taxi.y == 100)) {
-                        //no agrega opción
-                    } else if (taxi.x == 0) {
-                        if (ciudad.atraviesaElemento(taxi, new Point(taxi.x + 1, taxi.y)) == null) {
-                            nroOpciones.add(3);
-                        }
-                    } else if (taxi.x == 100) {
-                        if (ciudad.atraviesaElemento(taxi, new Point(taxi.x - 1, taxi.y))== null) {
-                            nroOpciones.add(1);
-                        }
-                    } else if (taxi.y == 0) {
-                        if (ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y + 1))== null) {
-                            nroOpciones.add(2);
-                        }
-                    } else if (taxi.y == 100) {
-                        if (ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y - 1))== null) {
-                            nroOpciones.add(4);
-                        }
-                    } else {
-                        for (int i = 0; i < 4; i++) {
-                            if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1 && matriz[taxi.y + dy[i]][taxi.x + dx[i]] != -9 && ciudad.atraviesaElemento(taxi, new Point(taxi.x + dx[i], taxi.y + dy[i])) == null) {
-                                nroOpciones.add(i + 1);
+                    if (contador == 6) {
+
+                        nroOpciones = new ArrayList();
+                        if ((taxi.x == 0 || taxi.x == 100) && (taxi.y == 0 || taxi.y == 100)) {
+                            //no agrega opción
+                        } else if (taxi.x == 0) {
+                            if (ciudad.atraviesaElemento(taxi, new Point(taxi.x + 1, taxi.y)) == null) {
+                                nroOpciones.add(3);
+                            }
+                        } else if (taxi.x == 100) {
+                            if (ciudad.atraviesaElemento(taxi, new Point(taxi.x - 1, taxi.y)) == null) {
+                                nroOpciones.add(1);
+                            }
+                        } else if (taxi.y == 0) {
+                            if (ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y + 1)) == null) {
+                                nroOpciones.add(2);
+                            }
+                        } else if (taxi.y == 100) {
+                            if (ciudad.atraviesaElemento(taxi, new Point(taxi.x, taxi.y - 1)) == null) {
+                                nroOpciones.add(4);
+                            }
+                        } else {
+                            for (int i = 0; i < 4; i++) {
+                                if (Math.abs(matriz[taxi.y + dy[i]][taxi.x + dx[i]]) != 1 && matriz[taxi.y + dy[i]][taxi.x + dx[i]] != -9 && ciudad.atraviesaElemento(taxi, new Point(taxi.x + dx[i], taxi.y + dy[i])) == null) {
+                                    nroOpciones.add(i + 1);
+                                }
                             }
                         }
-                    }
-                    opcionElegida = (nroOpciones.size() > 0) ? nroOpciones.get((int) (Math.random() * nroOpciones.size())) : 5;
-                    if (opcionElegida != 5) {
-                        taxi.y += dy[opcionElegida - 1];
-                        taxi.x += dx[opcionElegida - 1];
-                    } else {
-                        //el taxi no se puede mover
-                        JOptionPane.showMessageDialog(null, "El taxi no se puede mover. Ingrese una posición válida");
-                        while (true) {
-                            taxi.x = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la nueva posición x del taxi"));
-                            taxi.y = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la nueva posición y del taxi"));
-                            if (taxi.x < 0 || taxi.x > 100 || taxi.y < 0 || taxi.y > 100) {
-                                JOptionPane.showMessageDialog(null, "El taxi no puede estar fuera del escenario");
-                                continue;
+                        opcionElegida = (nroOpciones.size() > 0) ? nroOpciones.get((int) (Math.random() * nroOpciones.size())) : 5;
+                        if (opcionElegida != 5) {
+                            taxi.y += dy[opcionElegida - 1];
+                            taxi.x += dx[opcionElegida - 1];
+                        } else {
+                            //el taxi no se puede mover
+                            JOptionPane.showMessageDialog(null, "El taxi no se puede mover. Ingrese una posición válida");
+                            while (true) {
+                                taxi.x = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la nueva posición x del taxi"));
+                                taxi.y = Integer.parseInt(JOptionPane.showInputDialog("Ingrese la nueva posición y del taxi"));
+                                if (taxi.x < 0 || taxi.x > 100 || taxi.y < 0 || taxi.y > 100) {
+                                    JOptionPane.showMessageDialog(null, "El taxi no puede estar fuera del escenario");
+                                    continue;
+                                }
+                                break;
                             }
-                            break;
                         }
                     }
                 }
@@ -144,7 +148,12 @@ public class MovimientoTaxis extends Thread {
                 break;
             }
             try {
-                hiloActual.sleep(3000);
+                hiloActual.sleep(500);
+                if (contador == 6) {
+                    contador = 1;
+                } else {
+                    contador++;
+                }
             } catch (InterruptedException ex) {
                 break;
             }

@@ -154,7 +154,7 @@ public class Graficador {
                 for (Rectangle pedazoRuta : rutaVisible) {
                     graficos.setColor(Color.getHSBColor(hue, 1f, 1f));
                     graficos.fillRoundRect(pedazoRuta.x, pedazoRuta.y, pedazoRuta.width, pedazoRuta.height, 7, 7);
-                    hue += 0.1 / rutaVisible.size();
+                    hue += 0.15 / rutaVisible.size();
                 }
             }
             List<Taxi> taxisEnCarrera5 = Taxi.getTaxisEnCarrera5(taxis);

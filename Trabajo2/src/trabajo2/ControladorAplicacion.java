@@ -153,16 +153,15 @@ public class ControladorAplicacion {
                 try {
                     int x1 = Integer.parseInt(JOptionPane.showInputDialog("X inicial"));
                     int y1 = Integer.parseInt(JOptionPane.showInputDialog("Y inicial"));
-                    if (x1 < 0 || x1 > 100 || y1 < 0 || y1 > 100) {
-                        JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar fuera del escenario");
-                        return;
-                    }
-                    if ((x1 == 0 || x1 == 100) && (y1 == 0 || y1 == 100)) {
-                        JOptionPane.showMessageDialog(interfaz, "El taxi no puede recorrer el borde del escenario");
+                    if (x1 <= 0 || x1 >= 100 || y1 <= 0 || y1 >= 100) {
+                        JOptionPane.showMessageDialog(interfaz, "La ruta no puede pasar por el borde del escenario");
                         return;
                     }
                     if (graficador.getCiudad().getMatrizActual()[y1][x1] == -1) {
                         JOptionPane.showMessageDialog(interfaz, "El usuario no puede estar en un hueco");
+                        return;
+                    } else if (graficador.getCiudad().getMatrizActual()[y1][x1] == 1) {
+                        JOptionPane.showMessageDialog(interfaz, "La ruta no puede atravesar edificios");
                         return;
                     }
                     Taxi taxiMasCercano = getTaxiMasCercano(x1, y1);
@@ -306,12 +305,15 @@ public class ControladorAplicacion {
         try {
             int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
             int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
-            if (x2 < 0 || x2 > 100 || y2 < 0 || y2 > 100) {
-                JOptionPane.showMessageDialog(interfaz, "El destino no puede estar fuera del escenario");
+            if (x2 <= 0 || x2 >= 100 || y2 <= 0 || y2 >= 100) {
+                JOptionPane.showMessageDialog(interfaz, "La ruta no puede pasar por el borde del escenario");
                 return;
             }
             if (graficador.getCiudad().getMatrizActual()[y2][x2] == -1) {
                 JOptionPane.showMessageDialog(interfaz, "El destino no puede estar dentro de un hueco");
+                return;
+            } else if (graficador.getCiudad().getMatrizActual()[y2][x2] == 1) {
+                JOptionPane.showMessageDialog(interfaz, "La ruta no puede atravesar edificios");
                 return;
             }
             Ciudad ciudad = graficador.getCiudad();
@@ -334,7 +336,7 @@ public class ControladorAplicacion {
             int x2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino x2"));
             int y2 = Integer.parseInt(JOptionPane.showInputDialog("Ingrese el destino y2"));
             if (x2 < 0 || x2 > 100 || y2 < 0 || y2 > 100) {
-                JOptionPane.showMessageDialog(interfaz, "El destino no puede estar fuera del escenario");
+                JOptionPane.showMessageDialog(interfaz, "Las coordenadas deben estar entre 0 y 100");
                 return;
             }
             if (graficador.getCiudad().getMatrizActual()[y2][x2] == -1) {

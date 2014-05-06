@@ -358,7 +358,7 @@ public class Ciudad {
     }
 
     private boolean puedoMoverme(int[][] tamanoRecorrido, Point nodoAux, Point nodoUsuario, Point nodoTaxi, Point nodoActual) {
-        return ((nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100) || nodoAux.equals(nodoTaxi) && (nodoUsuario.x > 0 && nodoUsuario.x < 100 && nodoUsuario.y > 0 && nodoUsuario.y < 100)) && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && (Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1 || edificioContienePuntos(nodoUsuario, nodoAux) || edificioContienePuntos(nodoTaxi, nodoAux)) && atraviesaElemento(nodoActual, nodoAux) == null;
+        return (nodoAux.x > 0 && nodoAux.x < 100 && nodoAux.y > 0 && nodoAux.y < 100) && tamanoRecorrido[nodoAux.y][nodoAux.x] == 0 && Math.abs(matrizActual[nodoAux.y][nodoAux.x]) != 1 && atraviesaElemento(nodoActual, nodoAux) == null;
     }
 
 }
