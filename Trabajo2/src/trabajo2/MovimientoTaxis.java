@@ -57,7 +57,7 @@ public class MovimientoTaxis extends Thread {
                 try {
                     hiloActual.sleep(3000);
                     esperaInicio = false;
-                    contador = 6;
+                    contador = 3;
                 } catch (InterruptedException ex) {
                     break;
                 }
@@ -95,7 +95,7 @@ public class MovimientoTaxis extends Thread {
                         taxi.setLocation(siguiente);
                         continue;
                     }
-                    if (contador == 6) {
+                    if (contador == 3) {
 
                         nroOpciones = new ArrayList();
                         if ((taxi.x == 0 || taxi.x == 100) && (taxi.y == 0 || taxi.y == 100)) {
@@ -148,8 +148,8 @@ public class MovimientoTaxis extends Thread {
                 break;
             }
             try {
-                hiloActual.sleep(500);
-                if (contador == 6) {
+                hiloActual.sleep(1000);
+                if (contador == 3) {
                     contador = 1;
                 } else {
                     contador++;
